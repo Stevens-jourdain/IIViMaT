@@ -1,0 +1,26 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2015
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IIViMaT", "IIViMaT.csproj", "{E0AEFF0E-6A21-4852-90F6-9AF29CC79991}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IIViMaT.Editor", "IIViMaT.Editor.csproj", "{E0146044-3302-3473-6CE0-00C1DC5719E3}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{E0AEFF0E-6A21-4852-90F6-9AF29CC79991}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E0AEFF0E-6A21-4852-90F6-9AF29CC79991}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E0AEFF0E-6A21-4852-90F6-9AF29CC79991}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E0AEFF0E-6A21-4852-90F6-9AF29CC79991}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E0146044-3302-3473-6CE0-00C1DC5719E3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E0146044-3302-3473-6CE0-00C1DC5719E3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E0146044-3302-3473-6CE0-00C1DC5719E3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E0146044-3302-3473-6CE0-00C1DC5719E3}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
