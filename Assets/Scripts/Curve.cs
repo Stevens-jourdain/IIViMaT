@@ -12,6 +12,8 @@ public class Curve : MonoBehaviour {
     private LineRenderer lineRenderer = null;
     private Color color = Color.red;
 
+    public bool IsPadLeftContact = false, IsPadRightContact = false;
+
     /* -------------------------------------------------------------- */
     /* -------------------- Curve Methods --------------------------- */
 
@@ -19,10 +21,15 @@ public class Curve : MonoBehaviour {
      * @brief getter position
      * 
      * @return list of position
-     */ 
+     */
     public List<Vector3> GetPoints()
     {
         return positions;
+    }
+
+    public int GetNbPoints()
+    {
+        return positions.Count;
     }
 
     /**
@@ -135,6 +142,42 @@ public class Curve : MonoBehaviour {
 
             // No redraw after that
             redraw = false;
+        }
+    }
+
+    public void OnTriggerEnter(Collider other)
+    {
+        Debug.Log("il y a un contact ");
+        Debug.Log(other.gameObject.name);
+        if(other.CompareTag("LeftPad"))
+        {
+            IsPadLeftContact = true;
+            Debug.Log("Contact avec le pad gauche : " + color);
+        }
+
+        if (other.CompareTag("RightPad"))
+        {
+            IsPadRightContact = true;
+            Debug.Log("Contact avec le pad droit : " + color);
+        }
+    }
+
+    public void OnTriggerExit(Collider other)
+    {
+        Debug.Log("il y a une perte de contact ");
+        Debug.Log(other.gameObject.name);
+
+        if (other.CompareTag("LeftPad"))
+        {
+            IsPadLeftContact = false;
+            Debug.Log("Perte du contact avec le pad gauche : " + color);
+        }
+
+        if (other.CompareTag("RightPad"))
+        {
+            IsPadRightContact = false;
+
+            Debug.Log("Perte du contact avec le pad droit : " + color);
         }
     }
 }

@@ -53,7 +53,7 @@ public class VAirDraw : MonoBehaviour {
 
                 // Get data
                 string[] data = currentline.Split(' ');
-                float r, g, b, a;
+                float r, g, b;
 
                 // Extract rgb data
                 r = (float)int.Parse(data[0]) / 255f;

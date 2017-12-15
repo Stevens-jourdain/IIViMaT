@@ -11,6 +11,30 @@ public class Bezier : MonoBehaviour {
 
     /* -------------------------------------------------------------- */
     /* -------------------- Curve Methods --------------------------- */
+
+    /**
+     * @brief Define the i-th tangeante
+     * 
+     * @param[in]   i           the index
+     * @param[in]   points      the controls points
+     * 
+     * @return the tangent
+     */
+    private Vector3 Tangent(int i, ref List<Vector3> points)
+     {
+        if (i + 1 == points.Count)
+            return points[i] - points[i - 1];
+        else if (i - 1 < 0)
+            return points[i + 1] - points[i];
+        else
+            return points[i + 1] - points[i - 1];        
+     }
+
+    /**
+     * @brief Define the Bezier Cubique
+     * 
+     * @param[in]   controlsPoints      the controls' points
+     */ 
     public void DefineBezier(Curve controlsPoint)
     {
         // Get controls points
@@ -19,14 +43,14 @@ public class Bezier : MonoBehaviour {
         int nbControlsPoints = points.Count;
 
         // Cast to double only one time
-        float d_nbPoint = (float)nbPoints;
+        float d_nbPoint = nbPoints;
 
         // Instanciate Bezier
-        Curve c = Instantiate(bezierCurvePrefabs).GetComponent<Curve>();
+        Curve c = Instantiate(bezierCurvePrefabs).GetComponent<Curve>();        
         c.SetColor(controlsPoint.GetColor(), 0.9f);
 
         // Current point
-        Vector3 P = new Vector3(), T1 = new Vector3(), T0 = new Vector3();
+        Vector3 P0 = new Vector3(), P1 = new Vector3(), T1 = new Vector3(), T0 = new Vector3();
 
         // Fo each point
         for(int i = 0; i < nbPoints; ++i)
@@ -35,36 +59,32 @@ public class Bezier : MonoBehaviour {
             float t = (float)i / d_nbPoint;
 
             // Calculate index
-            int i_0 = (int) (t * nbControlsPoints);
+            int i_0 = (int) (t * (nbControlsPoints-1));
             int i_1 = i_0 + 1;
 
             // check index 
             if (i_1 == nbControlsPoints)
             {
-                i_1 = i_0;
-                T1 = points[i_1] - points[i_0 - 1];
+                // Add this point to curve
+                c.AddPoint(points[i_0]);
             }
             else
             {
-                if(i_1 + 1 == nbControlsPoints)
-                    T1 = points[i_1] - points[i_0];
-                else
-                    T1 = points[i_1 + 1] - points[i_1];
-            }
+                // Get points
+                P0 = points[i_0];
+                P1 = points[i_1];
 
-            if (i_0 == 0)
-            {
-                T0 = points[i_1] - points[i_0];
-            }
-            else
-            {
-                T0 = points[i_0] - points[i_0 - 1];
-            }
+                // Get tangent
+                T0 = Tangent(i_0, ref points);
+                T1 = Tangent(i_1, ref points);
 
-            P = points[i_0] * Mathf.Pow(1f - t, 3f) + 3 * T0 * t * Mathf.Pow(1f-t, 2f) + 3 * T1 * (t * t) * (1f-t) + points[i_1] * Mathf.Pow(t, 3f);
+                // Ajust paramater
+                t = t * (nbControlsPoints - 1) - i_0;
 
-            // Add this point to curve
-            c.AddPoint(P);
+                // Add the Bezier point
+                c.AddPoint(points[i_0] * Mathf.Pow(1f - t, 3f) + 3 * T0 * t * Mathf.Pow(1f - t, 2f) + 3 * T1 * (t * t) * (1f - t) + points[i_1] * Mathf.Pow(t, 3f));
+                //c.AddPoint(Mathf.Pow(t, 3.0f) * (2 * P0 - 2 * P1 + T0 + T1) + Mathf.Pow(t, 2.0f) * (-3 * P0 + 3 * P1 - 2 * T0 - T1) + t * T0 + P0); 
+            }            
         }
 
         // Draw Curve
