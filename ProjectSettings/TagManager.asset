@@ -7,6 +7,7 @@ TagManager:
   - LeftPad
   - RightPad
   - Curve
+  - Bezier
   layers:
   - Default
   - TransparentFX

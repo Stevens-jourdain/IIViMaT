@@ -7,7 +7,7 @@ public class Bezier : MonoBehaviour {
     /* ----------------------------------------------------------- */
     /* -------------------- Attributes --------------------------- */    
     public GameObject bezierCurvePrefabs;
-    private int nbPoints = 100000;
+    private int nbPoints = 10000;
 
     /* -------------------------------------------------------------- */
     /* -------------------- Curve Methods --------------------------- */
@@ -41,12 +41,14 @@ public class Bezier : MonoBehaviour {
         List<Vector3> points = controlsPoint.GetPoints();
         // How many ?
         int nbControlsPoints = points.Count;
-
+        
         // Cast to double only one time
         float d_nbPoint = nbPoints;
 
         // Instanciate Bezier
-        Curve c = Instantiate(bezierCurvePrefabs).GetComponent<Curve>();        
+        GameObject curveObj = Instantiate(bezierCurvePrefabs);
+        curveObj.tag = "Bezier";
+        Curve c = curveObj.GetComponent<Curve>();        
         c.SetColor(controlsPoint.GetColor(), 0.9f);
 
         // Current point
@@ -60,10 +62,10 @@ public class Bezier : MonoBehaviour {
 
             // Calculate index
             int i_0 = (int) (t * (nbControlsPoints-1));
-            int i_1 = i_0 + 1;
+            int i_1 = i_0 + 50;
 
             // check index 
-            if (i_1 == nbControlsPoints)
+            if (i_1 >= nbControlsPoints)
             {
                 // Add this point to curve
                 c.AddPoint(points[i_0]);
@@ -82,8 +84,8 @@ public class Bezier : MonoBehaviour {
                 t = t * (nbControlsPoints - 1) - i_0;
 
                 // Add the Bezier point
-                c.AddPoint(points[i_0] * Mathf.Pow(1f - t, 3f) + 3 * T0 * t * Mathf.Pow(1f - t, 2f) + 3 * T1 * (t * t) * (1f - t) + points[i_1] * Mathf.Pow(t, 3f));
-                //c.AddPoint(Mathf.Pow(t, 3.0f) * (2 * P0 - 2 * P1 + T0 + T1) + Mathf.Pow(t, 2.0f) * (-3 * P0 + 3 * P1 - 2 * T0 - T1) + t * T0 + P0); 
+                //c.AddPoint(points[i_0] * Mathf.Pow(1f - t, 3f) + 3 * T0 * t * Mathf.Pow(1f - t, 2f) + 3 * T1 * (t * t) * (1f - t) + points[i_1] * Mathf.Pow(t, 3f));
+                c.AddPoint(Mathf.Pow(t, 3.0f) * (2 * P0 - 2 * P1 + T0 + T1) + Mathf.Pow(t, 2.0f) * (-3 * P0 + 3 * P1 - 2 * T0 - T1) + t * T0 + P0); 
             }            
         }
 

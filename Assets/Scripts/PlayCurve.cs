@@ -96,7 +96,7 @@ public class PlayCurve : MonoBehaviour {
 
         if(curves.Count == 0)
         {
-            GameObject[] curvesObjects = GameObject.FindGameObjectsWithTag("Curve");
+            GameObject[] curvesObjects = GameObject.FindGameObjectsWithTag("Bezier");
 
             foreach (GameObject curve in curvesObjects)
             {
