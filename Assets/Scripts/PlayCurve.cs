@@ -32,25 +32,16 @@ public class PlayCurve : MonoBehaviour {
     /* -------------------------------------------------------------- */
     /* -------------------- Play Curve Method ----------------------- */
     public void IncrementCamera()
-    {
-
-        Debug.Log("increment : " + currentIndexPoint);
+    {        
         ++currentIndexPoint;
 
-        if(currentIndexPoint == curves[currentIndexCurve%3].GetNbPoints())
+        if(currentIndexPoint == curves[currentIndexCurve].GetNbPoints())
         {
+            t.Stop();
             t.Close();
             t = null;
-            currentIndexPoint = 0;
-            currentIndexCurve++;
-
-
-            Debug.Log("changement de courbes : " + currentIndexCurve);
+            ChangeCurve(currentIndexCurve+1);
         }
-
-
-        Debug.Log("increment : " + currentIndexPoint);
-
         changed = true;
     }
 
@@ -63,33 +54,35 @@ public class PlayCurve : MonoBehaviour {
 
             changed = true;
         }
-        else
-            ChangeCurve(0);
+        else        
+            ChangeCurve(0);        
     }
 
     public void Play()
     {
-        t = new Timer();
-        t.Elapsed += new ElapsedEventHandler(OnTimer);
+        if (currentIndexPoint == 0)
+        {
+            t = new Timer();
+            t.Elapsed += new ElapsedEventHandler(OnTimer);
+        }
+
         t.Interval = vitesse; // 1000/24;
-        t.Start();
+
+        if (currentIndexPoint == 0)        
+            t.Start();        
     }
 
     public void Pause()
     {
-        if(t != null)
-            t.Stop();
+        if(t != null)        
+            t.Interval = double.MaxValue;        
     }
 
     public void OnTimer(object source, ElapsedEventArgs e)
     {
-        Debug.Log(t);
         if (t != null)
         {
-            Debug.Log("avant increment");
             IncrementCamera();
-
-            Debug.Log("apres increment");
         }
     }
 
@@ -123,7 +116,6 @@ public class PlayCurve : MonoBehaviour {
             {
                 Curve c = curve.GetComponent<Curve>();
                 curves.Add(c);
-                Debug.Log("test " + (i++));
             }
             currentIndexPoint = 0;
             currentIndexCurve = 0;

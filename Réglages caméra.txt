@@ -2,10 +2,6 @@ Position sphère :
 X = 0.72  
 Y = 1.78
 Z = -1.83
-<<<<<<< HEAD
 @
 
 popo
-=======
-#
->>>>>>> ea3b1aee8e308c8abca9038a70705dffe8220081
