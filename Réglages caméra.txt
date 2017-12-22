@@ -1,0 +1,4 @@
+Position sphère : 
+X = 0.72
+Y = 1.78
+Z = -1.83

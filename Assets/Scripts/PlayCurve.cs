@@ -17,6 +17,9 @@ public class PlayCurve : MonoBehaviour {
     // Camera
     public GameObject cam = null;
 
+    // Vitesse 
+    public double vitesse = 100;
+
     private bool changed = false;
 
     // Timer
@@ -30,14 +33,23 @@ public class PlayCurve : MonoBehaviour {
     /* -------------------- Play Curve Method ----------------------- */
     public void IncrementCamera()
     {
+
+        Debug.Log("increment : " + currentIndexPoint);
         ++currentIndexPoint;
 
-        if(currentIndexPoint == curves[currentIndexCurve].GetNbPoints())
+        if(currentIndexPoint == curves[currentIndexCurve%3].GetNbPoints())
         {
+            t.Close();
             t = null;
             currentIndexPoint = 0;
             currentIndexCurve++;
+
+
+            Debug.Log("changement de courbes : " + currentIndexCurve);
         }
+
+
+        Debug.Log("increment : " + currentIndexPoint);
 
         changed = true;
     }
@@ -51,13 +63,15 @@ public class PlayCurve : MonoBehaviour {
 
             changed = true;
         }
+        else
+            ChangeCurve(0);
     }
 
     public void Play()
     {
         t = new Timer();
         t.Elapsed += new ElapsedEventHandler(OnTimer);
-        t.Interval = 100; // 1000/24;
+        t.Interval = vitesse; // 1000/24;
         t.Start();
     }
 
@@ -69,8 +83,14 @@ public class PlayCurve : MonoBehaviour {
 
     public void OnTimer(object source, ElapsedEventArgs e)
     {
-        if(t != null)
+        Debug.Log(t);
+        if (t != null)
+        {
+            Debug.Log("avant increment");
             IncrementCamera();
+
+            Debug.Log("apres increment");
+        }
     }
 
     void FixedUpdate()
@@ -96,12 +116,14 @@ public class PlayCurve : MonoBehaviour {
 
         if(curves.Count == 0)
         {
-            GameObject[] curvesObjects = GameObject.FindGameObjectsWithTag("Bezier");
+            GameObject[] curvesObjects = GameObject.FindGameObjectsWithTag("Curve");
 
+            int i = 0;
             foreach (GameObject curve in curvesObjects)
             {
                 Curve c = curve.GetComponent<Curve>();
                 curves.Add(c);
+                Debug.Log("test " + (i++));
             }
             currentIndexPoint = 0;
             currentIndexCurve = 0;
@@ -109,7 +131,8 @@ public class PlayCurve : MonoBehaviour {
 
         if(changed)
         {
-            cam.transform.position = curves[currentIndexCurve].GetPoints()[currentIndexPoint];
+            Debug.Log(currentIndexCurve);
+            cam.transform.position = curves[currentIndexCurve%3].GetPoints()[currentIndexPoint];
             changed = false;
         }
 
