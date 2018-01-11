@@ -9,6 +9,7 @@ public class VAirDraw : MonoBehaviour {
     /* ----------------------------------------------------------- */
     public GameObject curvePrefabs;
     public Bezier bezier;
+    public Main main;
 
     private void ReadWithoutComment(ref StreamReader reader, ref string line)
     {
@@ -119,10 +120,10 @@ public class VAirDraw : MonoBehaviour {
     }
     
 
-    public VAirDraw()
+    void Awake()
     {
         // List all curves
-        ListFilesFromDir lfd = new ListFilesFromDir(Main.config.path_to_import + "/VAirDraw/");
+        ListFilesFromDir lfd = new ListFilesFromDir(main.config.path_to_import + "/VAirDraw/");
         string[] allFilesCurves = lfd.files;
 
         // Show list to content's creator

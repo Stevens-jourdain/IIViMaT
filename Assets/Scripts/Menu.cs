@@ -21,12 +21,12 @@ public class Menu : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
-
+        /*
         Mesh mesh = playerVideo.GetComponent<Mesh>();
         Vector3[] normals = mesh.normals;
         for (int i = 0; i < normals.Length; i++)
             normals[i] = -normals[i];
-        mesh.normals = normals;
+        mesh.normals = normals;*/
 
        /* for (int m = 0; m < mesh.subMeshCount; m++)
         {

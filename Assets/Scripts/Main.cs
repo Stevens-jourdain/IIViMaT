@@ -5,13 +5,13 @@ using System.IO;
 
 public class Main : MonoBehaviour {
 
-    static public Config config = null;
+    public Config config = null;
 
 	// Use this for initialization
-	void Start () {
+	void Awake() {
         // Ouverture du fichier JSON
         string dataAsJson = File.ReadAllText(Application.dataPath + "/config.json");
-
+        
         // Parse du fichier .json
         config = JsonUtility.FromJson<Config>(dataAsJson);
     }

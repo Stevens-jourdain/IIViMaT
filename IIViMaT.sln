@@ -1,6 +1,6 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 2017
+# Visual Studio 2015
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IIViMaT", "IIViMaT.csproj", "{E0AEFF0E-6A21-4852-90F6-9AF29CC79991}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IIViMaT.Editor", "IIViMaT.Editor.csproj", "{E0146044-3302-3473-6CE0-00C1DC5719E3}"
