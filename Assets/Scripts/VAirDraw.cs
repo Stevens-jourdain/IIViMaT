@@ -10,6 +10,7 @@ public class VAirDraw : MonoBehaviour {
     public GameObject curvePrefabs;
     public Bezier bezier;
     public Main main;
+    public Menu menu;
 
     private void ReadWithoutComment(ref StreamReader reader, ref string line)
     {
@@ -25,7 +26,7 @@ public class VAirDraw : MonoBehaviour {
     public void ImportFromVAirDraw(string file)
     {
         // Open the file
-        StreamReader reader = new StreamReader(file);
+        StreamReader reader = new StreamReader(main.config.path_to_import + "/VAirDraw/" + file);
 
         // Initialize map of <int, Curve>
         Dictionary<int, Curve> curves = new Dictionary<int, Curve>();
@@ -125,11 +126,11 @@ public class VAirDraw : MonoBehaviour {
         // List all curves
         ListFilesFromDir lfd = new ListFilesFromDir(main.config.path_to_import + "/VAirDraw/");
         string[] allFilesCurves = lfd.files;
+        
+        Menu.Del handler = ImportFromVAirDraw;
 
         // Show list to content's creator
-
-
-        //ImportFromVAirDraw();
+        menu.AddItems(allFilesCurves, handler);
     }
    
 }

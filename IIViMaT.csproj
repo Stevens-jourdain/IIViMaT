@@ -301,6 +301,7 @@
     <Compile Include="Assets\Scripts\Config.cs" />
     <Compile Include="Assets\Scripts\Curve.cs" />
     <Compile Include="Assets\Scripts\InvertNormals.cs" />
+    <Compile Include="Assets\Scripts\ItemMenu.cs" />
     <Compile Include="Assets\Scripts\ListFilesFromDir.cs" />
     <Compile Include="Assets\Scripts\Main.cs" />
     <Compile Include="Assets\Scripts\Menu.cs" />

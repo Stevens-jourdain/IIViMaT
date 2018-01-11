@@ -19,6 +19,13 @@ public class Menu : MonoBehaviour {
 	public SteamVR_TrackedObject left = null, right = null;
 	private SteamVR_Controller.Device leftDevice = null, rightDevice = null;
 
+    public GameObject ItemMenu_prefabs;
+    public GameObject[] itemsObj;
+    private ItemMenu[] itemsList;
+    public int indexItem = 0, nbItems;
+
+    Del handler;
+
 	// Use this for initialization
 	void Start () {
         /*
@@ -47,6 +54,32 @@ public class Menu : MonoBehaviour {
 
     }
 
+    public delegate void Del(string item);
+
+    public void AddItems(string[] items, Del handler)
+    {
+        this.handler = handler;
+        nbItems = items.Length;
+        indexItem = 0;
+        itemsList = new ItemMenu[nbItems];
+        itemsObj = new GameObject[nbItems];
+
+        for (int i = 0; i < nbItems; ++i)
+        {
+            itemsObj[i] = Instantiate(ItemMenu_prefabs);
+            itemsObj[i].transform.parent = this.transform;
+            itemsObj[i].SetActive(true);
+            itemsList[i] = itemsObj[i].GetComponent<ItemMenu>();
+            itemsList[i].SetValue(items[i]);
+
+            Vector3 pos = itemsObj[i].GetComponent<RectTransform>().position;
+            pos.y = Screen.height - ( i * (50 + 10)) - 45;
+            itemsObj[i].GetComponent<RectTransform>().position = pos;
+        }
+
+        itemsList[0].Select();
+    }
+
 
     void FixedUpdate()
     {
@@ -60,9 +93,48 @@ public class Menu : MonoBehaviour {
         }
     }
 
+    void ViderMenu()
+    {
+        for(int i = 0; i < nbItems; ++i)
+        {
+            Destroy(itemsObj[i]);
+        }
+
+        itemsList = null;
+        itemsObj = null;
+        nbItems = 0;
+    }
+
 
     // Update is called once per frame
     void Update () {
+        if (nbItems > 0)
+        {
+            if (Input.GetKeyUp(KeyCode.UpArrow))
+            {
+                Debug.Log(indexItem);
+                itemsList[indexItem].Unselect();
+                indexItem = (indexItem - 1);
+
+                if (indexItem < 0)
+                    indexItem = nbItems - 1;
+
+                itemsList[indexItem].Select();
+            }
+            else if (Input.GetKeyUp(KeyCode.DownArrow))
+            {
+                Debug.Log(indexItem);
+                itemsList[indexItem].Unselect();
+                indexItem = (indexItem + 1) % nbItems;
+                itemsList[indexItem].Select();
+            }
+            else if (Input.GetKeyUp(KeyCode.KeypadEnter))
+            {
+                handler(itemsList[indexItem].GetValue());
+                ViderMenu();
+            }
+        }
+
         if ((leftDevice == null) || (rightDevice == null)) {
             return;
         }
@@ -90,8 +162,29 @@ public class Menu : MonoBehaviour {
                 videoPlayer.Play();
 
             }
+        }
 
+        if (nbItems > 0 && rightDevice.GetPress(SteamVR_Controller.ButtonMask.Touchpad))
+        {
+            float y = rightDevice.GetAxis(EVRButtonId.k_EButton_SteamVR_Touchpad).y;
+            if (y > 0.2)
+            {
+                itemsList[indexItem].Unselect();
+                indexItem = (indexItem + 1) % nbItems;
+                itemsList[indexItem].Select();
+            }
+            else if(y < -0.2)
+            {
+                itemsList[indexItem].Unselect();
+                indexItem = (indexItem - 1) % nbItems;
+                itemsList[indexItem].Select();
+            }            
+        }
 
+        if(nbItems > 0 && rightDevice.GetPress(Valve.VR.EVRButtonId.k_EButton_ApplicationMenu))
+        {
+            handler(itemsList[indexItem].GetValue());
+            ViderMenu();
         }
     }
 }
