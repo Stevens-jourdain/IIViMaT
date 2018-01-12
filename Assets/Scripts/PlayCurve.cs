@@ -20,7 +20,11 @@ public class PlayCurve : MonoBehaviour {
     // Vitesse 
     public double vitesse = 100;
 
+    // Changement de courbe
     private bool changed = false;
+
+    // Action reaction
+    public ActionReaction actionReaction;
 
     // Timer
     Timer t = null;
@@ -97,8 +101,7 @@ public class PlayCurve : MonoBehaviour {
         if(curves.Count == 0)
         {
             GameObject[] curvesObjects = GameObject.FindGameObjectsWithTag("Curve");
-
-            int i = 0;
+            
             foreach (GameObject curve in curvesObjects)
             {
                 Curve c = curve.GetComponent<Curve>();
@@ -110,9 +113,11 @@ public class PlayCurve : MonoBehaviour {
 
         if(changed)
         {
-            Debug.Log(currentIndexCurve);
             cam.transform.position = curves[currentIndexCurve%3].GetPoints()[currentIndexPoint];
             changed = false;
+
+            // Application d'une reaction ?
+            actionReaction.ProcessActionReaction(currentIndexPoint);
         }
 
 	    if(main.leftDevice != null && main.rightDevice != null)

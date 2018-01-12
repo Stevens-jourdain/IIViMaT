@@ -297,6 +297,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Assets\Scripts\ActionReaction.cs" />
     <Compile Include="Assets\Scripts\Bezier.cs" />
     <Compile Include="Assets\Scripts\Config.cs" />
     <Compile Include="Assets\Scripts\Curve.cs" />

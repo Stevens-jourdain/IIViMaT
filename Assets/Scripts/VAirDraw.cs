@@ -198,7 +198,14 @@ public class VAirDraw : MonoBehaviour {
             {
                 curve.transform.localScale = new Vector3(scale, scale, scale);
                 curve.transform.position += position;
-            }  
+            }
+            GameObject[] BezierObjects = GameObject.FindGameObjectsWithTag("Bezier");
+
+            foreach (GameObject bezier in BezierObjects)
+            {
+                bezier.transform.localScale = new Vector3(scale, scale, scale);
+                bezier.transform.position += position;
+            }
         }
 
         // Si on retire le message box
