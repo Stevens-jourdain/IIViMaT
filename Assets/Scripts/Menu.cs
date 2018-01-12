@@ -165,7 +165,7 @@ public class Menu : MonoBehaviour {
             }            
         }
 
-        if(nbItems > 0 && main.rightDevice.GetPress(Valve.VR.EVRButtonId.k_EButton_ApplicationMenu))
+        if(nbItems > 0 && main.rightDevice.GetPress(Valve.VR.EVRButtonId.k_EButton_A))
         {
             handler(itemsList[indexItem].GetValue());
             ViderMenu();
