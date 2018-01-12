@@ -117,7 +117,9 @@ public class VAirDraw : MonoBehaviour {
         }
 
         // Close reader
-        reader.Close();        
+        reader.Close();
+
+        main.ShowMessage("Mise en place des courbes dans l'espace.");   
     }
     
 

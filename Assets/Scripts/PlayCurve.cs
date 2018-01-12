@@ -25,9 +25,8 @@ public class PlayCurve : MonoBehaviour {
     // Timer
     Timer t = null;
 
-    // Pad
-    public SteamVR_TrackedObject left = null, right = null;
-    private SteamVR_Controller.Device leftDevice = null, rightDevice = null;
+    // Main script
+    public Main main;
 
     /* -------------------------------------------------------------- */
     /* -------------------- Play Curve Method ----------------------- */
@@ -86,18 +85,6 @@ public class PlayCurve : MonoBehaviour {
         }
     }
 
-    void FixedUpdate()
-    {
-        // Get Device
-        if(((int) left.index != -1 && (int) right.index != -1) && (leftDevice == null || rightDevice == null))
-        {
-            leftDevice = SteamVR_Controller.Input((int)left.index);
-            rightDevice = SteamVR_Controller.Input((int)right.index);
-
-            Debug.Log("Initialisation des pads");
-        }
-    }
-
     // Use this for initialization
     void Start ()
     {
@@ -128,16 +115,16 @@ public class PlayCurve : MonoBehaviour {
             changed = false;
         }
 
-	    if(leftDevice != null && rightDevice != null)
+	    if(main.leftDevice != null && main.rightDevice != null)
         {
             if (currentIndexPoint != -1)
             {
-                if (leftDevice.GetPress(Valve.VR.EVRButtonId.k_EButton_ApplicationMenu))
+                if (main.leftDevice.GetPress(Valve.VR.EVRButtonId.k_EButton_ApplicationMenu))
                 {
                     Play();
                 }
 
-                if (rightDevice.GetPress(Valve.VR.EVRButtonId.k_EButton_ApplicationMenu))
+                if (main.rightDevice.GetPress(Valve.VR.EVRButtonId.k_EButton_ApplicationMenu))
                 {
                     Pause();
                 }

@@ -15,14 +15,13 @@ public class Menu : MonoBehaviour {
 
     public GameObject playerVideo;
     public VideoPlayer videoPlayer;
-
-	public SteamVR_TrackedObject left = null, right = null;
-	private SteamVR_Controller.Device leftDevice = null, rightDevice = null;
-
+    
     public GameObject ItemMenu_prefabs;
     public GameObject[] itemsObj;
     private ItemMenu[] itemsList;
     public int indexItem = 0, nbItems;
+
+    public Main main;
 
     Del handler;
 
@@ -80,19 +79,6 @@ public class Menu : MonoBehaviour {
         itemsList[0].Select();
     }
 
-
-    void FixedUpdate()
-    {
-        // Get Device
-        if (((int)left.index != -1 && (int)right.index != -1) && (leftDevice == null || rightDevice == null))
-        {
-            leftDevice = SteamVR_Controller.Input((int)left.index);
-            rightDevice = SteamVR_Controller.Input((int)right.index);
-
-            Debug.Log("Initialisation des pads");
-        }
-    }
-
     void ViderMenu()
     {
         for(int i = 0; i < nbItems; ++i)
@@ -112,7 +98,6 @@ public class Menu : MonoBehaviour {
         {
             if (Input.GetKeyUp(KeyCode.UpArrow))
             {
-                Debug.Log(indexItem);
                 itemsList[indexItem].Unselect();
                 indexItem = (indexItem - 1);
 
@@ -123,7 +108,6 @@ public class Menu : MonoBehaviour {
             }
             else if (Input.GetKeyUp(KeyCode.DownArrow))
             {
-                Debug.Log(indexItem);
                 itemsList[indexItem].Unselect();
                 indexItem = (indexItem + 1) % nbItems;
                 itemsList[indexItem].Select();
@@ -135,11 +119,11 @@ public class Menu : MonoBehaviour {
             }
         }
 
-        if ((leftDevice == null) || (rightDevice == null)) {
+        if ((main.leftDevice == null) || (main.rightDevice == null)) {
             return;
         }
 
-        if (leftDevice.GetPress(Valve.VR.EVRButtonId.k_EButton_SteamVR_Trigger)) {
+        if (main.leftDevice.GetPress(Valve.VR.EVRButtonId.k_EButton_SteamVR_Trigger)) {
             Debug.Log("Trigger gauche");
             string path = EditorUtility.OpenFilePanel("Import a virtual scene", "", "obj");
             if (path.Length != 0)
@@ -148,7 +132,7 @@ public class Menu : MonoBehaviour {
             }
         }
 
-        if (rightDevice.GetPress(Valve.VR.EVRButtonId.k_EButton_SteamVR_Trigger))
+        if (main.rightDevice.GetPress(Valve.VR.EVRButtonId.k_EButton_SteamVR_Trigger))
         {
             Debug.Log("Trigger droite");
             string path = EditorUtility.OpenFilePanel("Import a virtual scene", "", "mp4");
@@ -164,9 +148,9 @@ public class Menu : MonoBehaviour {
             }
         }
 
-        if (nbItems > 0 && rightDevice.GetPress(SteamVR_Controller.ButtonMask.Touchpad))
+        if (nbItems > 0 && main.rightDevice.GetPress(SteamVR_Controller.ButtonMask.Touchpad))
         {
-            float y = rightDevice.GetAxis(EVRButtonId.k_EButton_SteamVR_Touchpad).y;
+            float y = main.rightDevice.GetAxis(EVRButtonId.k_EButton_SteamVR_Touchpad).y;
             if (y > 0.2)
             {
                 itemsList[indexItem].Unselect();
@@ -181,7 +165,7 @@ public class Menu : MonoBehaviour {
             }            
         }
 
-        if(nbItems > 0 && rightDevice.GetPress(Valve.VR.EVRButtonId.k_EButton_ApplicationMenu))
+        if(nbItems > 0 && main.rightDevice.GetPress(Valve.VR.EVRButtonId.k_EButton_ApplicationMenu))
         {
             handler(itemsList[indexItem].GetValue());
             ViderMenu();
