@@ -8,14 +8,7 @@ using UnityEngine.Video;
 
 using Valve.VR;
 
-public class Menu : MonoBehaviour {
-
-	public Button ButtonVR;
-	public Button Button360;
-
-    public GameObject playerVideo;
-    public VideoPlayer videoPlayer;
-    
+public class Menu : MonoBehaviour {                
     public GameObject ItemMenu_prefabs;
     public GameObject[] itemsObj;
     private ItemMenu[] itemsList;
@@ -27,29 +20,6 @@ public class Menu : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
-        /*
-        Mesh mesh = playerVideo.GetComponent<Mesh>();
-        Vector3[] normals = mesh.normals;
-        for (int i = 0; i < normals.Length; i++)
-            normals[i] = -normals[i];
-        mesh.normals = normals;*/
-
-       /* for (int m = 0; m < mesh.subMeshCount; m++)
-        {
-            int[] triangles = mesh.GetTriangles(m);
-            for (int i = 0; i < triangles.Length; i += 3)
-            {
-                int temp = triangles[i + 0];
-                triangles[i + 0] = triangles[i + 1];
-                triangles[i + 1] = temp;
-            }
-            mesh.SetTriangles(triangles, m);
-        }*/
-
-        //Button btnVR = ButtonVR.GetComponent<Button> ();
-        //btnVR.onClick.AddListener (TaskOnClick);
-        //Button btn360 = Button360.GetComponent<Button> ();
-        //btn360.onClick.AddListener (TaskOnClick2);
 
     }
 
@@ -94,6 +64,7 @@ public class Menu : MonoBehaviour {
 
     // Update is called once per frame
     void Update () {
+        // Selection dans le menu
         if (nbItems > 0)
         {
             if (Input.GetKeyUp(KeyCode.UpArrow))
@@ -119,35 +90,13 @@ public class Menu : MonoBehaviour {
             }
         }
 
-        if ((main.leftDevice == null) || (main.rightDevice == null)) {
+        // Sans VR on va pas plus loin dans cette fonction
+        if ((main.leftDevice == null) || (main.rightDevice == null))
+        {
             return;
         }
 
-        if (main.leftDevice.GetPress(Valve.VR.EVRButtonId.k_EButton_SteamVR_Trigger)) {
-            Debug.Log("Trigger gauche");
-            string path = EditorUtility.OpenFilePanel("Import a virtual scene", "", "obj");
-            if (path.Length != 0)
-            {
-                var fileContent = File.ReadAllBytes(path);
-            }
-        }
-
-        if (main.rightDevice.GetPress(Valve.VR.EVRButtonId.k_EButton_SteamVR_Trigger))
-        {
-            Debug.Log("Trigger droite");
-            string path = EditorUtility.OpenFilePanel("Import a virtual scene", "", "mp4");
-            if (path.Length != 0)
-            {
-                //var fileContent = File.ReadAllBytes(path);
-                var videoPlayer = playerVideo.AddComponent<UnityEngine.Video.VideoPlayer>();
-                videoPlayer.playOnAwake = false;
-                videoPlayer.url = path;
-                videoPlayer.isLooping = true;
-                videoPlayer.Play();
-
-            }
-        }
-
+        // Selection menu en VR
         if (nbItems > 0 && main.rightDevice.GetPress(SteamVR_Controller.ButtonMask.Touchpad))
         {
             float y = main.rightDevice.GetAxis(EVRButtonId.k_EButton_SteamVR_Touchpad).y;
@@ -164,7 +113,6 @@ public class Menu : MonoBehaviour {
                 itemsList[indexItem].Select();
             }            
         }
-
         if(nbItems > 0 && main.rightDevice.GetPress(Valve.VR.EVRButtonId.k_EButton_A))
         {
             handler(itemsList[indexItem].GetValue());
