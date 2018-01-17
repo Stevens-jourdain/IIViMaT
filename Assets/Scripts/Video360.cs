@@ -110,6 +110,12 @@ public class Video360 : MonoBehaviour {
             videoPlayer.loopPointReached += hand;
         }
     }
+    
+    public void AddVideoAt(string path, Vecteur3_IIViMaT pos)
+    {
+        this.AddVideo(path);
+        videos[videos.Count - 1].transform.position = new Vector3(pos.x, pos.y, pos.z);
+    }
 
     public void PlayVideo()
     {

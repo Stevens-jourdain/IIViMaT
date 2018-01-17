@@ -26,7 +26,7 @@ GameObject:
   - component: {fileID: 114266558684906070}
   m_Layer: 0
   m_Name: Video360_player
-  m_TagString: Untagged
+  m_TagString: Video360
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0

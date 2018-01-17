@@ -8,6 +8,7 @@ TagManager:
   - RightPad
   - Curve
   - Bezier
+  - Video360
   layers:
   - Default
   - TransparentFX
