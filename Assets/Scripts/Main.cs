@@ -21,6 +21,8 @@ public class Main : MonoBehaviour {
     public SteamVR_TrackedObject left = null, right = null;
     public SteamVR_Controller.Device leftDevice = null, rightDevice = null;
 
+	public Menu menu;
+
     void FixedUpdate()
     {
         // Initialisation des pads HTC Vive
@@ -90,6 +92,31 @@ public class Main : MonoBehaviour {
         stream.WriteLine(json);
         stream.Close();
     }
+
+	public void ParSeq (string str) {
+		if (str == "Parallele") {
+			video360.isSequentiel = false;
+		} 
+		else {
+			video360.isSequentiel = true;
+		}
+	}
+
+	public void GestionMenu (string str) {
+		if (str == "Nouveau") {
+			//Gestion du menu ParSeq
+			string[] ParSeqMenu = new string[2];
+			ParSeqMenu [0] = "Sequentiel";
+			ParSeqMenu [1] = "Parallele";
+
+			Menu.Del handler = ParSeq;
+
+			menu.AddItems (ParSeqMenu, handler);
+		} 
+		else {
+			Load ();
+		}
+	}
     
     void Awake() {
         // Ouverture du fichier JSON
@@ -97,6 +124,15 @@ public class Main : MonoBehaviour {
         
         // Parse du fichier .json
         config = JsonUtility.FromJson<Config>(dataAsJson);
+
+		// Gestion du menu
+		string[] TitleMenu = new string[2];
+		TitleMenu[0] = "Nouveau";
+		TitleMenu [1] = "Charger";
+
+		Menu.Del handler = GestionMenu;
+
+		menu.AddItems(TitleMenu, handler);
     }
 	
 	void Update () {
