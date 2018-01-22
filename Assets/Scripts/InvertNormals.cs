@@ -23,8 +23,8 @@ public class InvertNormals : MonoBehaviour
                 for (int i = 0; i < triangles.Length; i += 3)
                 {
                     int temp = triangles[i + 0];
-                    triangles[i + 0] = triangles[i + 1];
-                    triangles[i + 1] = temp;
+                    triangles[i + 0] = triangles[i + 2];
+                    triangles[i + 2] = temp;
                 }
                 mesh.SetTriangles(triangles, m);
             }
