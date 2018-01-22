@@ -4,7 +4,8 @@ using UnityEngine;
 using UnityEngine.Video;
 using UnityEditor;
 
-public class Video360 : MonoBehaviour {
+public class Video360 : MonoBehaviour
+{
 
     public bool isSequentiel = true;
     public GameObject cam;
@@ -17,12 +18,14 @@ public class Video360 : MonoBehaviour {
     public Main main;
 
     // Use this for initialization
-    void Start () {
+    void Start()
+    {
         videos = new List<GameObject>();
     }
 
     // Update is called once per frame
-    void Update () {
+    void Update()
+    {
         // Ouverture de video au clavier
         if (Input.GetKeyUp(KeyCode.O))
         {
@@ -39,6 +42,24 @@ public class Video360 : MonoBehaviour {
         if (Input.GetKeyUp(KeyCode.M))
         {
             PauseVideo();
+        }         
+
+        if (Input.GetKeyUp(KeyCode.N))
+        {
+            if (indexVideoCourante >= videos.Count)
+                indexVideoCourante = 0;
+
+            NextVideo(videos[indexVideoCourante].GetComponent<VideoPlayer>());
+
+            int nb = videos.Count;
+            for (int i = 0; i < nb; ++i)
+            {
+                if (i != indexVideoCourante)
+                    videos[i].SetActive(false);
+            }
+
+            videos[indexVideoCourante].SetActive(true);
+            videos[indexVideoCourante].GetComponent<VideoPlayer>().Play();
         }
 
         // Sans VR on va pas plus loin dans cette fonction
@@ -51,6 +72,22 @@ public class Video360 : MonoBehaviour {
         if (main.leftDevice.GetPress(Valve.VR.EVRButtonId.k_EButton_SteamVR_Trigger))
         {
             Debug.Log("Trigger gauche");
+
+            if (indexVideoCourante >= videos.Count)
+                indexVideoCourante = 0;
+
+            NextVideo(videos[indexVideoCourante].GetComponent<VideoPlayer>());
+
+            int nb = videos.Count;
+            for (int i = 0; i < nb; ++i)
+            {
+                if (i != indexVideoCourante)
+                    videos[i].SetActive(false);
+            }
+
+            videos[indexVideoCourante].SetActive(true);
+            videos[indexVideoCourante].GetComponent<VideoPlayer>().Play();
+
             /*string path = EditorUtility.OpenFilePanel("Import a virtual scene", "", "obj");
             if (path.Length != 0)
             {
@@ -59,11 +96,11 @@ public class Video360 : MonoBehaviour {
         }
 
         // Ouverture 360 en vr
-        if (main.rightDevice.GetPress(Valve.VR.EVRButtonId.k_EButton_SteamVR_Trigger) || main.leftDevice.GetPress(Valve.VR.EVRButtonId.k_EButton_SteamVR_Trigger))
+        if (main.rightDevice.GetPress(Valve.VR.EVRButtonId.k_EButton_SteamVR_Trigger))
         {
-            Debug.Log("Trigger droite");
-            string path = EditorUtility.OpenFilePanel("Import a virtual scene", "", "mp4");
-            AddVideo(path);
+            /* Debug.Log("Trigger droite");
+             string path = EditorUtility.OpenFilePanel("Import a virtual scene", "", "mp4");
+             AddVideo(path);*/
         }
 
     }
@@ -73,7 +110,7 @@ public class Video360 : MonoBehaviour {
         ++indexVideoCourante;
 
         // Fin du film
-        if (indexVideoCourante == videos.Count)
+        if (indexVideoCourante >= videos.Count)
             indexVideoCourante = 0;
         else
         {
@@ -88,7 +125,7 @@ public class Video360 : MonoBehaviour {
     public void AddVideo(string path)
     {
         GameObject video = Instantiate<GameObject>(prefab_player);
-        
+
         var videoPlayer = video.GetComponent<VideoPlayer>();
         videoPlayer.playOnAwake = false;
         videoPlayer.url = path;
@@ -110,7 +147,7 @@ public class Video360 : MonoBehaviour {
             videoPlayer.loopPointReached += hand;
         }
     }
-    
+
     public void AddVideoAt(string path, Vecteur3_IIViMaT pos)
     {
         this.AddVideo(path);
@@ -119,14 +156,14 @@ public class Video360 : MonoBehaviour {
 
     public void PlayVideo()
     {
-        if(isSequentiel)
+        if (isSequentiel)
         {
             videos[indexVideoCourante].GetComponent<VideoPlayer>().Play();
         }
         else
         {
-            foreach(GameObject v in videos)            
-                v.GetComponent<VideoPlayer>().Play();            
+            foreach (GameObject v in videos)
+                v.GetComponent<VideoPlayer>().Play();
         }
     }
 

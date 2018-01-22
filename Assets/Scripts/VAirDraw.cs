@@ -223,13 +223,13 @@ public class VAirDraw : MonoBehaviour {
     void Awake()
     {
         // List all curves
-        ListFilesFromDir lfd = new ListFilesFromDir(main.config.path_to_import + "/VAirDraw/");
+        /*ListFilesFromDir lfd = new ListFilesFromDir(main.config.path_to_import + "/VAirDraw/");
         string[] allFilesCurves = lfd.files;
         
         Menu.Del handler = ImportFromVAirDraw;
 
         // Show list to content's creator
-        menu.AddItems(allFilesCurves, handler);
+        menu.AddItems(allFilesCurves, handler);*/
     }
    
 }
