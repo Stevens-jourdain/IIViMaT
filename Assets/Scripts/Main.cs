@@ -126,13 +126,13 @@ public class Main : MonoBehaviour {
         config = JsonUtility.FromJson<Config>(dataAsJson);
 
 		// Gestion du menu
-		/*string[] TitleMenu = new string[2];
-		TitleMenu[0] = "Nouveau";
-		TitleMenu[1] = "Charger";
-
-		Menu.Del handler = GestionMenu;
-
-		menu.AddItems(TitleMenu, handler);*/
+//		string[] TitleMenu = new string[2];
+//		TitleMenu[0] = "Nouveau";
+//		TitleMenu[1] = "Charger";
+//
+//		Menu.Del handler = GestionMenu;
+//
+//		menu.AddItems(TitleMenu, handler);
     }
 	
 	void Update () {
