@@ -20,7 +20,13 @@ public class Menu : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
+		string[] TitleMenu = new string[2];
+		TitleMenu[0] = "Nouveau";
+		TitleMenu[1] = "Charger";
 
+		Menu.Del handler = main.GestionMenu;
+
+		main.menu.AddItems(TitleMenu, handler);
     }
 
     public delegate void Del(string item);
