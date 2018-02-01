@@ -114,7 +114,14 @@ public class Main : MonoBehaviour {
 			menu.AddItems (ParSeqMenu, handler);
 		} 
 		else {
-			Load ();
+			//Load ();
+			ListFilesFromDir lfd = new ListFilesFromDir(config.path_to_import + "/Video360/");
+			string[] allFilesCurves = lfd.files;
+
+			Menu.Del handler = video360.AddVideo;
+
+			// Show list to content's creator
+			menu.AddItems(allFilesCurves, handler);
 		}
 	}
     

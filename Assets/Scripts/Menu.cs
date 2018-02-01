@@ -42,7 +42,7 @@ public class Menu : MonoBehaviour {
         for (int i = 0; i < nbItems; ++i)
         {
             itemsObj[i] = Instantiate(ItemMenu_prefabs);
-            itemsObj[i].transform.parent = this.transform;
+			itemsObj [i].transform.parent = this.transform;
             itemsObj[i].SetActive(true);
             itemsList[i] = itemsObj[i].GetComponent<ItemMenu>();
             itemsList[i].SetValue(items[i]);
