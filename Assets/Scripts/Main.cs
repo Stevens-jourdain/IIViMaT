@@ -105,13 +105,10 @@ public class Main : MonoBehaviour {
 	public void GestionMenu (string str) {
 		if (str == "Nouveau") {
 			//Gestion du menu ParSeq
-			string[] ParSeqMenu = new string[2];
-			ParSeqMenu [0] = "Sequentiel";
-			ParSeqMenu [1] = "Parallele";
-
+			string[] ParSeqMenu = { "Sequentiel" , "Parallele" };
 			Menu.Del handler = ParSeq;
 
-			menu.AddItems (ParSeqMenu, handler);
+			menu.AddItems(ParSeqMenu, handler);
 		} 
 		else {
 			Load ();
@@ -171,7 +168,8 @@ public class Main : MonoBehaviour {
      */
     public void Load()
     {
-        var path = EditorUtility.OpenFilePanel("Import a virtual scene", "", "IIViMaT");
-        this.ChargerFichier(path);
+        string path = EditorUtility.OpenFilePanel("Import a virtual scene", "", "IIViMaT");
+        if(path != null && path.Length > 0)
+            this.ChargerFichier(path);
     }
 }

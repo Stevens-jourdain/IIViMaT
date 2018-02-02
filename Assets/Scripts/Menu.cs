@@ -41,15 +41,14 @@ public class Menu : MonoBehaviour {
 
         for (int i = 0; i < nbItems; ++i)
         {
-            itemsObj[i] = Instantiate(ItemMenu_prefabs);
+            itemsObj[i] = Instantiate(ItemMenu_prefabs, transform);
             itemsObj[i].transform.parent = this.transform;
-            itemsObj[i].SetActive(true);
+            itemsObj[i].transform.localScale = new Vector3(0.001f, 0.001f, 0.001f);
+            itemsObj[i].transform.position = new Vector3(0, 0.21f - (i * 0.07f), -0.5f);
+            itemsObj[i].SetActive(true);           
+
             itemsList[i] = itemsObj[i].GetComponent<ItemMenu>();
             itemsList[i].SetValue(items[i]);
-
-            Vector3 pos = itemsObj[i].GetComponent<RectTransform>().position;
-            pos.y = Screen.height - ( i * (50 + 10)) - 45;
-            itemsObj[i].GetComponent<RectTransform>().position = pos;
         }
 
         itemsList[0].Select();
@@ -91,8 +90,9 @@ public class Menu : MonoBehaviour {
             }
             else if (Input.GetKeyUp(KeyCode.KeypadEnter))
             {
-                handler(itemsList[indexItem].GetValue());
+                string value = itemsList[indexItem].GetValue();
                 ViderMenu();
+                handler(value);                
             }
         }
 
