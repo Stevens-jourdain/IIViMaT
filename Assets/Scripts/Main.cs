@@ -16,6 +16,9 @@ public class Main : MonoBehaviour {
 
     // Vidéo360 script pour l'import de vidéo
     public Video360 video360;
+
+    // VAirDraw
+    public VAirDraw vairdraw;
     public GameObject curvePrefabs;
 
     // Pad HTC Vive
@@ -232,11 +235,21 @@ public class Main : MonoBehaviour {
         if (Input.GetKeyUp(KeyCode.C))
             this.Load();
 
-        // Retire le message de l'écran - Version VR
+        if ((Input.GetKeyUp(KeyCode.M)))
+            MenuPad();
+
+            // Retire le message de l'écran - Version VR
         if (rightDevice == null || leftDevice == null)
             return;
-        if(rightDevice.GetPress(Valve.VR.EVRButtonId.k_EButton_ApplicationMenu) || leftDevice.GetPress(Valve.VR.EVRButtonId.k_EButton_ApplicationMenu))        
-            Messagebox_Canvas.SetActive(false);                
+
+        if (rightDevice.GetPress(Valve.VR.EVRButtonId.k_EButton_ApplicationMenu) || leftDevice.GetPress(Valve.VR.EVRButtonId.k_EButton_ApplicationMenu))        
+            MenuPad();
+
+        if (rightDevice.GetPress(Valve.VR.EVRButtonId.k_EButton_SteamVR_Trigger) || leftDevice.GetPress(Valve.VR.EVRButtonId.k_EButton_SteamVR_Trigger))
+        {
+            if(Messagebox_Canvas.activeInHierarchy)
+                Messagebox_Canvas.SetActive(false);
+        }
     }
 
     /*
@@ -261,11 +274,11 @@ public class Main : MonoBehaviour {
     }
 
 	public void LoadMenu(string str) {
-		if (str == "Charger scene") {
-			ListFilesFromDir lfd = new ListFilesFromDir(config.path_to_import + "/Scenes/");
+		if (str == "Charger courbe") {
+			ListFilesFromDir lfd = new ListFilesFromDir(config.path_to_import + "/VAirDraw/");
 			string[] allFilesCurves = lfd.files;
 
-			Menu.Del handler = ChargerFichier;
+			Menu.Del handler = vairdraw.ImportFromVAirDraw;
 
 			// Show list to content's creator
 			menu.AddItems(allFilesCurves, handler);
@@ -281,12 +294,10 @@ public class Main : MonoBehaviour {
 		}
 	}
 
-	public void MenuPad(){
-		if ((Input.GetKeyUp (KeyCode.M))||(main.leftDevice.GetPress(Valve.VR.EVRButtonId.k_EButton_ApplicationMenu))||(main.rightDevice.GetPress(Valve.VR.EVRButtonId.k_EButton_ApplicationMenu))) {
-			string[] LoadingMenu = { "Charger scene", "Charger video" };
-			Menu.Del handler = LoadMenu;
+	public void MenuPad(){		
+		string[] LoadingMenu = { "Charger courbe", "Charger video" };
+		Menu.Del handler = LoadMenu;
 
-			menu.AddItems(LoadingMenu, handler);
-		}
+		menu.AddItems(LoadingMenu, handler);		
 	}
 }

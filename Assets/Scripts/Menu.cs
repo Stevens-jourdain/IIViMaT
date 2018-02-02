@@ -75,19 +75,35 @@ public class Menu : MonoBehaviour {
         {
             if (Input.GetKeyUp(KeyCode.UpArrow))
             {
-                itemsList[indexItem].Unselect();
-                indexItem = (indexItem - 1);
+                if (indexItem - 1 >= 0)
+                {
+                    if (indexItem > 5)
+                    {
+                        this.transform.position -= new Vector3(0, 0.075f, 0);
+                    }
 
-                if (indexItem < 0)
-                    indexItem = nbItems - 1;
+                    itemsList[indexItem].Unselect();
+                    indexItem = (indexItem - 1);
 
-                itemsList[indexItem].Select();
+                    if (indexItem < 0)
+                        indexItem = nbItems - 1;
+
+                    itemsList[indexItem].Select();
+                }
             }
             else if (Input.GetKeyUp(KeyCode.DownArrow))
             {
-                itemsList[indexItem].Unselect();
-                indexItem = (indexItem + 1) % nbItems;
-                itemsList[indexItem].Select();
+                if (indexItem + 1 < nbItems)
+                {
+                    itemsList[indexItem].Unselect();
+                    indexItem = (indexItem + 1) % nbItems;
+                    itemsList[indexItem].Select();
+
+                    if (indexItem > 5)
+                    {
+                        this.transform.position += new Vector3(0, 0.075f, 0);
+                    }
+                }                                
             }
             else if (Input.GetKeyUp(KeyCode.KeypadEnter))
             {
@@ -122,8 +138,9 @@ public class Menu : MonoBehaviour {
         }
         if(nbItems > 0 && main.rightDevice.GetPress(Valve.VR.EVRButtonId.k_EButton_A))
         {
-            handler(itemsList[indexItem].GetValue());
+            string value = itemsList[indexItem].GetValue();
             ViderMenu();
+            handler(value);
         }
     }
 }

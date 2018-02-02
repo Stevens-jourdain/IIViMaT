@@ -16,7 +16,7 @@ public class Video360 : MonoBehaviour
     private int indexVideoCourante = 0;
 
     public Main main;
-
+    
     // Use this for initialization
     void Start()
     {
@@ -29,20 +29,16 @@ public class Video360 : MonoBehaviour
         // Ouverture de video au clavier
         if (Input.GetKeyUp(KeyCode.O))
         {
-            string path = EditorUtility.OpenFilePanel("Import a virtual scene", "", "mp4");
-            AddVideo(path);
+            PauseVideo();
+            //string path = EditorUtility.OpenFilePanel("Import a virtual scene", "", "mp4");
+            //AddVideo(path);
         }
 
         // Lecture des videos
         if (Input.GetKeyUp(KeyCode.P))
         {
             PlayVideo();
-        }
-        // Pause
-        if (Input.GetKeyUp(KeyCode.M))
-        {
-            PauseVideo();
-        }         
+        }        
 
         if (Input.GetKeyUp(KeyCode.N))
         {
@@ -128,8 +124,15 @@ public class Video360 : MonoBehaviour
 
         var videoPlayer = video.GetComponent<VideoPlayer>();
         videoPlayer.playOnAwake = false;
-        videoPlayer.url = path;
+        videoPlayer.url = main.config.path_to_import + "/Video360/" + path;
         videoPlayer.isLooping = !isSequentiel;
+        videoPlayer.audioOutputMode = VideoAudioOutputMode.AudioSource;
+
+        var audioPlayer = video.GetComponent<AudioSource>();
+        //audioPlayer.playOnAwake = false;
+
+        videoPlayer.EnableAudioTrack(0, true);
+        videoPlayer.SetTargetAudioSource(0, audioPlayer);
 
         // Add to list
         videos.Add(video);
@@ -139,6 +142,7 @@ public class Video360 : MonoBehaviour
             if (videos.Count == 1)
             {
                 videoPlayer.Play();
+                audioPlayer.Play();
                 video.transform.position = cam.transform.position;
             }
 
@@ -169,7 +173,10 @@ public class Video360 : MonoBehaviour
         else
         {
             foreach (GameObject v in videos)
+            {
                 v.GetComponent<VideoPlayer>().Play();
+                v.GetComponent<AudioSource>().Play();
+            }
         }
     }
 
@@ -182,7 +189,10 @@ public class Video360 : MonoBehaviour
         else
         {
             foreach (GameObject v in videos)
+            {
                 v.GetComponent<VideoPlayer>().Pause();
+                v.GetComponent<AudioSource>().Pause();
+            }
         }
     }
 }
