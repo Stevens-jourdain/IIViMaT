@@ -51,7 +51,8 @@ public class Menu : MonoBehaviour {
             itemsList[i].SetValue(items[i]);
         }
 
-        itemsList[0].Select();
+        if(nbItems > 0)
+            itemsList[0].Select();
     }
 
     void ViderMenu()
