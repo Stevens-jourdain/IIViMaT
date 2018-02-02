@@ -259,4 +259,34 @@ public class Main : MonoBehaviour {
         if(path != null && path.Length > 0)
             this.ChargerFichier(path);
     }
+
+	public void LoadMenu(string str) {
+		if (str == "Charger scene") {
+			ListFilesFromDir lfd = new ListFilesFromDir(config.path_to_import + "/Scenes/");
+			string[] allFilesCurves = lfd.files;
+
+			Menu.Del handler = ChargerFichier;
+
+			// Show list to content's creator
+			menu.AddItems(allFilesCurves, handler);
+		} 
+		else {
+			ListFilesFromDir lfd = new ListFilesFromDir(config.path_to_import + "/Video360/");
+			string[] allFilesCurves = lfd.files;
+
+			Menu.Del handler = video360.AddVideo;
+
+			// Show list to content's creator
+			menu.AddItems(allFilesCurves, handler);
+		}
+	}
+
+	public void MenuPad(){
+		if ((Input.GetKeyUp (KeyCode.M))||(main.leftDevice.GetPress(Valve.VR.EVRButtonId.k_EButton_ApplicationMenu))||(main.rightDevice.GetPress(Valve.VR.EVRButtonId.k_EButton_ApplicationMenu))) {
+			string[] LoadingMenu = { "Charger scene", "Charger video" };
+			Menu.Del handler = LoadMenu;
+
+			menu.AddItems(LoadingMenu, handler);
+		}
+	}
 }
