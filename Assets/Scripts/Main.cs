@@ -111,7 +111,14 @@ public class Main : MonoBehaviour {
 			menu.AddItems(ParSeqMenu, handler);
 		} 
 		else {
-			Load ();
+//			Load ();
+			ListFilesFromDir lfd = new ListFilesFromDir(config.path_to_import + "/Projects/");
+			string[] allFilesCurves = lfd.files;
+
+			Menu.Del handler = ChargerFichier;
+
+			// Show list to content's creator
+			menu.AddItems(allFilesCurves, handler);
 		}
 	}
     
