@@ -16,6 +16,7 @@ public class Main : MonoBehaviour {
 
     // Vidéo360 script pour l'import de vidéo
     public Video360 video360;
+    public GameObject curvePrefabs;
 
     // Pad HTC Vive
     public SteamVR_TrackedObject left = null, right = null;
@@ -39,16 +40,31 @@ public class Main : MonoBehaviour {
     {
         // Ouverture en JSON
         string dataAsJson = File.ReadAllText(filepath);
-        IIViMaTFile file =  JsonUtility.FromJson<IIViMaTFile>(dataAsJson);
+        IIViMaTFile file = JsonUtility.FromJson<IIViMaTFile>(dataAsJson);
 
         // Application
         video360.isSequentiel = file.isSequentiel;
 
         int nbVideos = file.videos.Length;
-        for(int i = 0;  i < nbVideos; ++i)
+        for (int i = 0; i < nbVideos; ++i)
         {
             // Ajout de la vidéo à la scène
-            video360.AddVideoAt(file.videos[i].path, file.videos[i].position);
+            video360.AddVideoAt(file.videos[i].path, file.videos[i].position, file.videos[i].rotation, file.videos[i].scale);
+        }
+
+        // Chargement des courbes
+        for(int i = 0; i < file.courbes.Length; ++i)
+        {
+            GameObject obj = Instantiate(curvePrefabs);
+            Curve curve = obj.GetComponent<Curve>();
+            curve.SetColor(new Color(file.courbes[i].color.x, file.courbes[i].color.y, file.courbes[i].color.z));
+
+            for(int j = 0; j < file.courbes[i].points.Length; ++i)
+            {
+                Vector3 point = new Vector3(file.courbes[i].points[j].x, file.courbes[i].points[j].y, file.courbes[i].points[j].z);
+                Vector3 normal = new Vector3(file.courbes[i].normals[j].x, file.courbes[i].normals[j].y, file.courbes[i].normals[j].z);
+                curve.AddPointAndNormal(point, normal);
+            }
         }
     }
 
@@ -67,23 +83,87 @@ public class Main : MonoBehaviour {
 
         // Remplissage des données
         file.isSequentiel = video360.isSequentiel;
-        file.videos = new VideoJSON[nbVideos];
+        file.videos = new MediaJSON[nbVideos];
 
-        for(int i = 0; i < nbVideos; ++i)
+        // Enregistrement des vidéos
+        for (int i = 0; i < nbVideos; ++i)
         {
             GameObject video = videosObjects[i];
-            VideoJSON vid_json = new VideoJSON();
+            MediaJSON vid_json = new MediaJSON();
 
+            // Position
             Vecteur3_IIViMaT pos = new Vecteur3_IIViMaT();
             pos.x = video.transform.position.x;
             pos.y = video.transform.position.y;
             pos.z = video.transform.position.z;
             vid_json.position = pos;
+
+            // Rotation
+            Vecteur3_IIViMaT rot = new Vecteur3_IIViMaT();
+            rot.x = video.transform.rotation.x;
+            rot.y = video.transform.rotation.y;
+            rot.z = video.transform.rotation.z;
+            vid_json.rotation = rot;
+
+            // Scale
+            Vecteur3_IIViMaT scale = new Vecteur3_IIViMaT();
+            scale.x = video.transform.localScale.x;
+            scale.y = video.transform.localScale.y;
+            scale.z = video.transform.localScale.z;
+            vid_json.scale = scale;
+
             vid_json.path = video.GetComponent<VideoPlayer>().url;
 
             file.videos[i] = vid_json;
-            Debug.Log("Dans la boucle : " + i + ", position : " + pos.x + "; " + pos.y + " ; " + pos.z);
         }
+
+        // Enregistrement des courbes
+        // Liste des vidéos 360
+        GameObject[] curvesObjects = GameObject.FindGameObjectsWithTag("Curve");
+
+        // Nombre de vidéo
+        int nbCurves = curvesObjects.Length;
+
+        Debug.Log("Il y a " + nbCurves + " courbe dans la scène.");
+
+        // Remplissage des données
+        file.courbes = new CourbeJSON[nbCurves];
+
+        for (int i = 0; i < nbCurves; ++i)
+        {
+            GameObject courbe = curvesObjects[i];
+            file.courbes[i] = new CourbeJSON();
+
+            // Enregistrement points et normals
+            Vector3[] points = courbe.GetComponent<Curve>().GetPoints().ToArray();
+            Vector3[] normals = courbe.GetComponent<Curve>().GetNormals().ToArray();
+            file.courbes[i].points = new Vecteur3_IIViMaT[points.Length];
+            file.courbes[i].normals = new Vecteur3_IIViMaT[points.Length];
+
+            for (int j = 0; j < points.Length; ++j)
+            {
+                file.courbes[i].points[j] = new Vecteur3_IIViMaT();
+                file.courbes[i].points[j].x = points[i].x;
+                file.courbes[i].points[j].y = points[i].y;
+                file.courbes[i].points[j].z = points[i].z;
+
+                file.courbes[i].normals[j] = new Vecteur3_IIViMaT();
+                file.courbes[i].normals[j].x = normals[i].x;
+                file.courbes[i].normals[j].y = normals[i].y;
+                file.courbes[i].normals[j].z = normals[i].z;
+            }
+
+            // Enregistrement couleur
+            Color c = courbe.GetComponent<Curve>().GetColor();
+            file.courbes[i].color = new Vecteur3_IIViMaT();
+            file.courbes[i].color.x = c.r;
+            file.courbes[i].color.y = c.g;
+            file.courbes[i].color.z = c.b;
+        }
+
+        // Enregistrement des modèles
+
+        // Enregistrement des actions-réactions
 
         var path = EditorUtility.SaveFilePanel("Enregistrer votre projet", "", "", "IIViMaT");
         StreamWriter stream = File.CreateText(path);

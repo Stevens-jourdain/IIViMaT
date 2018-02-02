@@ -5,14 +5,25 @@ public class Vecteur3_IIViMaT
 }
 
 [System.Serializable]
-public class VideoJSON
+public class MediaJSON
 {
     public string path;
-    public Vecteur3_IIViMaT position;
+    public Vecteur3_IIViMaT position, rotation, scale;
 }
 
 [System.Serializable]
-public class IIViMaTFile  {
+public class CourbeJSON
+{
+    public Vecteur3_IIViMaT[] points;
+    public Vecteur3_IIViMaT[] normals;
+    public Vecteur3_IIViMaT color;
+}
+
+[System.Serializable]
+public class IIViMaTFile
+{
     public bool isSequentiel;
-    public VideoJSON[] videos;
+    public MediaJSON[] videos;
+    public CourbeJSON[] courbes;
+    public MediaJSON[] modeles;
 }
