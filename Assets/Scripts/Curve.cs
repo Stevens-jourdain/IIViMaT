@@ -32,6 +32,11 @@ public class Curve : MonoBehaviour {
         return positions.Count;
     }
 
+    public List<Vector3> GetNormals()
+    {
+        return normals;
+    }
+
     /**
      * @brief add a point to curve
      * 

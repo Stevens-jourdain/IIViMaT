@@ -19,11 +19,16 @@ public class ListFilesFromDir {
         FileInfo []fi = info.GetFiles();
 
         // Initialize array of string
-        files = new string[fi.Length];
+        List<string> files_list = new List<string>();
 
         // Set names of files
-        int i = 0;
-        foreach(FileInfo f in fi)        
-            files[i++] = f.Name;   
+        foreach (FileInfo f in fi)
+        {
+            if(f.Extension != ".meta")
+                files_list.Add(f.Name);
+        }
+
+        files = new string[files_list.Count];
+        files = files_list.ToArray();
     }
 }

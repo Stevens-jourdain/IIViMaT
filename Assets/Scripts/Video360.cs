@@ -148,9 +148,15 @@ public class Video360 : MonoBehaviour
         }
     }
 
-    public void AddVideoAt(string path, Vecteur3_IIViMaT pos)
+    public void AddVideoAt(string path, Vecteur3_IIViMaT pos, Vecteur3_IIViMaT rot, Vecteur3_IIViMaT scale)
     {
         this.AddVideo(path);
+        videos[videos.Count - 1].transform.localScale = new Vector3(scale.x, scale.y, scale.z);
+
+        videos[videos.Count - 1].transform.Rotate(Vector3.right, rot.x);
+        videos[videos.Count - 1].transform.Rotate(Vector3.up, rot.y);
+        videos[videos.Count - 1].transform.Rotate(Vector3.forward, rot.y);
+
         videos[videos.Count - 1].transform.position = new Vector3(pos.x, pos.y, pos.z);
     }
 
