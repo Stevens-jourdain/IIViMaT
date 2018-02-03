@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Video;
 using UnityEditor;
+using Valve.VR;
 
 public class Video360 : MonoBehaviour
 {
@@ -16,29 +17,35 @@ public class Video360 : MonoBehaviour
     private int indexVideoCourante = 0;
 
     public Main main;
-    
+
+    // Pour déplacer la vidéo
+    MoveObject mo;
+
     // Use this for initialization
     void Start()
     {
         videos = new List<GameObject>();
+
+        mo = new MoveObject();
+        mo.main = main;
     }
 
     // Update is called once per frame
     void Update()
     {
+        mo.MoveUpdate();
+
+        // S'il n'y a pas de vidéo, ou s'il y a un menu, ou s'il y a une main mise sur l'interaction, pas d'interaction ici
+        if (videos.Count == 0 || main.menu.nbItems > 0 || main.actionEnCours)
+            return;
+
         // Ouverture de video au clavier
-        if (Input.GetKeyUp(KeyCode.O))
-        {
-            PauseVideo();
-            //string path = EditorUtility.OpenFilePanel("Import a virtual scene", "", "mp4");
-            //AddVideo(path);
-        }
+        if (Input.GetKeyUp(KeyCode.O))        
+            PauseVideo();        
 
         // Lecture des videos
-        if (Input.GetKeyUp(KeyCode.P))
-        {
-            PlayVideo();
-        }        
+        if (Input.GetKeyUp(KeyCode.P))        
+            PlayVideo();              
 
         if (Input.GetKeyUp(KeyCode.N))
         {
@@ -59,15 +66,20 @@ public class Video360 : MonoBehaviour
         }
 
         // Sans VR on va pas plus loin dans cette fonction
-        if ((main.leftDevice == null) || (main.rightDevice == null))
-        {
-            return;
-        }
+        if ((main.leftDevice == null) || (main.rightDevice == null))        
+            return;        
 
-        // Ouverture models en vr
-        if (main.leftDevice.GetPress(Valve.VR.EVRButtonId.k_EButton_SteamVR_Trigger))
+        // Changement de video en VR
+        if (main.rightDevice.GetPress(SteamVR_Controller.ButtonMask.Touchpad))
         {
-            Debug.Log("Trigger gauche");
+            float x = main.rightDevice.GetAxis(EVRButtonId.k_EButton_SteamVR_Touchpad).x;
+
+            if (x > 0.2f)
+                ++indexVideoCourante;
+            else if (x < -0.2f)
+                --indexVideoCourante;
+            else
+                return;
 
             if (indexVideoCourante >= videos.Count)
                 indexVideoCourante = 0;
@@ -83,22 +95,7 @@ public class Video360 : MonoBehaviour
 
             videos[indexVideoCourante].SetActive(true);
             videos[indexVideoCourante].GetComponent<VideoPlayer>().Play();
-
-            /*string path = EditorUtility.OpenFilePanel("Import a virtual scene", "", "obj");
-            if (path.Length != 0)
-            {
-                var fileContent = File.ReadAllBytes(path);
-            }*/
         }
-
-        // Ouverture 360 en vr
-        if (main.rightDevice.GetPress(Valve.VR.EVRButtonId.k_EButton_SteamVR_Trigger))
-        {
-            /* Debug.Log("Trigger droite");
-             string path = EditorUtility.OpenFilePanel("Import a virtual scene", "", "mp4");
-             AddVideo(path);*/
-        }
-
     }
 
     public void NextVideo(VideoPlayer source)
@@ -129,7 +126,7 @@ public class Video360 : MonoBehaviour
         videoPlayer.audioOutputMode = VideoAudioOutputMode.AudioSource;
 
         var audioPlayer = video.GetComponent<AudioSource>();
-        //audioPlayer.playOnAwake = false;
+        audioPlayer.playOnAwake = false;
 
         videoPlayer.EnableAudioTrack(0, true);
         videoPlayer.SetTargetAudioSource(0, audioPlayer);
@@ -150,6 +147,13 @@ public class Video360 : MonoBehaviour
             VideoPlayer.EventHandler hand = NextVideo;
             videoPlayer.loopPointReached += hand;
         }
+
+        GameObject[] arr = new GameObject[1];
+        arr[0] = video;
+
+        mo.SetObjects(arr);
+        main.ShowMessage("Mise en place de la vidéo dans l'espace.");
+        mo.StartMove();
     }
 
     public void AddVideoAt(string path, Vecteur3_IIViMaT pos, Vecteur3_IIViMaT rot, Vecteur3_IIViMaT scale)
@@ -178,6 +182,11 @@ public class Video360 : MonoBehaviour
                 v.GetComponent<AudioSource>().Play();
             }
         }
+    }
+
+    public void PlayVideo(int index)
+    {
+        videos[index].GetComponent<VideoPlayer>().Play();
     }
 
     public void PauseVideo()

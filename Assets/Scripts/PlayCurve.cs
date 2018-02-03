@@ -75,6 +75,17 @@ public class PlayCurve : MonoBehaviour {
             t.Start();        
     }
 
+    public void Play(int index)
+    {
+        currentIndexCurve = index;
+        currentIndexPoint = 0;
+
+        t = new Timer();
+        t.Elapsed += new ElapsedEventHandler(OnTimer);
+        t.Interval = vitesse; // 1000/24;
+        t.Start();
+    }
+
     public void Pause()
     {
         if(t != null)        

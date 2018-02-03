@@ -13,8 +13,8 @@ public class VAirDraw : MonoBehaviour {
     public Menu menu;
 
     private float scale = 1f;
-
-    private int TimeToMoveCurve = 0;
+    
+    private MoveObject mo;
 
     private void ReadWithoutComment(ref StreamReader reader, ref string line)
     {
@@ -66,7 +66,7 @@ public class VAirDraw : MonoBehaviour {
             b = (float)int.Parse(data[2]) / 255f;
 
             // Set the color
-            colors[i] = new Color(r, g, b, 0.1f);
+            colors[i] = new Color(r, g, b, 0.8f);
         }
 
         // Skip timestamp and first point
@@ -139,97 +139,34 @@ public class VAirDraw : MonoBehaviour {
             keyvalue.Value.FinalizeImport();
 
             // Draw Bezier
-            bezier.DefineBezier(keyvalue.Value);
+            //bezier.DefineBezier(keyvalue.Value);
         }
 
         // Close reader
         reader.Close();
 
+        // Set object to move
+        mo.SetObjects(GameObject.FindGameObjectsWithTag("Curve"));
         main.ShowMessage("Mise en place des courbes dans l'espace.");
-        TimeToMoveCurve = 1;
+        mo.StartMove();
     }
 
     void Update()
-    {   
-        if(TimeToMoveCurve == 2)
-        {           
-            Vector3 position = new Vector3();
-
-            if(Input.GetKeyUp(KeyCode.KeypadPlus))
-            {
-                scale *= 1.5f;
-            }
-
-            if (Input.GetKeyUp(KeyCode.KeypadMinus))
-            {
-                scale *= 0.75f;
-            }
-
-            if (Input.GetKeyUp(KeyCode.UpArrow))
-                position.z++;
-            if (Input.GetKeyUp(KeyCode.DownArrow))
-                position.z--;
-            if (Input.GetKeyUp(KeyCode.RightArrow))
-                position.x++;
-            if (Input.GetKeyUp(KeyCode.LeftArrow))
-                position.x--;
-
-            if (Input.GetKeyUp(KeyCode.KeypadEnter))
-                TimeToMoveCurve = 0;
-
-            // HTC Vive Controller
-            if (main.rightDevice != null && main.leftDevice != null)
-            {
-                // Définition echelle et position
-                scale = main.rightDevice.GetAxis(Valve.VR.EVRButtonId.k_EButton_SteamVR_Touchpad).x + 1 * 5;
-                position = main.right.transform.position;
-
-                // Si on valide
-                if (main.rightDevice.GetPress(Valve.VR.EVRButtonId.k_EButton_ApplicationMenu))
-                {
-                    TimeToMoveCurve = 0;
-                }
-            }    
-
-            // Application pour chaque courbe
-            GameObject[] curvesObjects = GameObject.FindGameObjectsWithTag("Curve");
-            
-            foreach (GameObject curve in curvesObjects)
-            {
-                curve.transform.localScale = new Vector3(scale, scale, scale);
-                curve.transform.position += position;
-            }
-            GameObject[] BezierObjects = GameObject.FindGameObjectsWithTag("Bezier");
-
-            foreach (GameObject bezier in BezierObjects)
-            {
-                bezier.transform.localScale = new Vector3(scale, scale, scale);
-                bezier.transform.position += position;
-            }
-        }
-
-        // Si on retire le message box
-        if (TimeToMoveCurve == 1)
-        {
-            if (Input.GetKeyUp(KeyCode.KeypadEnter))
-                TimeToMoveCurve = 2;
-
-            if (main.rightDevice != null && main.leftDevice != null && main.rightDevice.GetPress(Valve.VR.EVRButtonId.k_EButton_ApplicationMenu))
-                TimeToMoveCurve = 2;
-        }
-    }
-
-
-    void Awake()
     {
-        // List all curves
-        /*ListFilesFromDir lfd = new ListFilesFromDir(main.config.path_to_import + "/VAirDraw/");
-        string[] allFilesCurves = lfd.files;
-        
-        Menu.Del handler = ImportFromVAirDraw;
-
-        // Show list to content's creator
-        menu.AddItems(allFilesCurves, handler);*/
+        mo.MoveUpdate();
     }
-   
+    public void ApplyTransformToCurve(GameObject curve)
+    {
+        curve.GetComponent<Curve>().ReloadPoint();
+    }
+
+    void Start()
+    {
+        mo = new MoveObject();
+        MoveObject.Handler hand = ApplyTransformToCurve;
+
+        mo.fn = hand;
+        mo.main = main;
+    }
+
 }

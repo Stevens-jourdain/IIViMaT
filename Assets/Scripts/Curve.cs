@@ -89,6 +89,14 @@ public class Curve : MonoBehaviour {
         return color;
     }
 
+    public void ReloadPoint()
+    {        
+        for(int i = 0; i < positions.Count; ++i)
+        {
+            positions[i] = transform.localToWorldMatrix * positions[i];
+        }
+    }
+
     /**
      * @brief  tell to script "ok draw now"
      */

@@ -308,7 +308,9 @@
     <Compile Include="Assets\Scripts\Main.cs" />
     <Compile Include="Assets\Scripts\Menu.cs" />
     <Compile Include="Assets\Scripts\Model.cs" />
+    <Compile Include="Assets\Scripts\MoveObject.cs" />
     <Compile Include="Assets\Scripts\PlayCurve.cs" />
+    <Compile Include="Assets\Scripts\Sphere360.cs" />
     <Compile Include="Assets\Scripts\VAirDraw.cs" />
     <Compile Include="Assets\Scripts\Video360.cs" />
     <Compile Include="Assets\SteamVR\Extras\SteamVR_GazeTracker.cs" />

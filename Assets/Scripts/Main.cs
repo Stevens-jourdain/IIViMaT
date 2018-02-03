@@ -27,6 +27,9 @@ public class Main : MonoBehaviour {
 
 	public Menu menu;
 
+    // Action en cours, permet d'éviter le conflit de bouton avec les interactions
+    public bool actionEnCours = false;
+
     void FixedUpdate()
     {
         // Initialisation des pads HTC Vive
