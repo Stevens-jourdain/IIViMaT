@@ -8,6 +8,7 @@ public class Vecteur3_IIViMaT
 public class MediaJSON
 {
     public string path;
+    public bool isActive;
     public Vecteur3_IIViMaT position, rotation, scale;
 }
 

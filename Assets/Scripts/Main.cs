@@ -58,7 +58,7 @@ public class Main : MonoBehaviour {
         for (int i = 0; i < nbVideos; ++i)
         {
             // Ajout de la vidéo à la scène
-            video360.AddVideoAt(file.videos[i].path, file.videos[i].position, file.videos[i].rotation, file.videos[i].scale);
+            video360.AddVideoAt(file.videos[i].path, file.videos[i].position, file.videos[i].rotation, file.videos[i].scale, file.videos[i].isActive);
         }
 
         // Chargement des courbes
@@ -121,7 +121,12 @@ public class Main : MonoBehaviour {
             scale.z = video.transform.localScale.z;
             vid_json.scale = scale;
 
-            vid_json.path = video.GetComponent<VideoPlayer>().url;
+            string url = video.GetComponent<VideoPlayer>().url;
+            url = url.Substring(url.LastIndexOf('/') + 1);
+            vid_json.path = url;
+
+            // Vidéo active par defaut ?
+            vid_json.isActive = video.activeInHierarchy;
 
             file.videos[i] = vid_json;
         }

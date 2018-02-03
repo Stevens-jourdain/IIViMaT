@@ -21,11 +21,14 @@ public class Video360 : MonoBehaviour
     // Pour déplacer la vidéo
     public MoveObject mo = null;
 
+    // Index pour activer/desactiver des videos
+    private int indexActive = 0;
+
     // Use this for initialization
-    void Start()
+    public void Start()
     {
-        videos = new List<GameObject>();    
-                
+        videos = new List<GameObject>();
+        
         mo.fn = setPlay;
         mo.main = main;
     }
@@ -142,7 +145,12 @@ public class Video360 : MonoBehaviour
             VideoPlayer.EventHandler hand = NextVideo;
             videoPlayer.loopPointReached += hand;
         }
+        
+        DeplacerVideo(video);       
+    }
 
+    public void DeplacerVideo(GameObject video)
+    {
         GameObject[] arr = new GameObject[1];
         arr[0] = video;
 
@@ -156,10 +164,32 @@ public class Video360 : MonoBehaviour
         VideoPlayer player = videoObj.GetComponent<VideoPlayer>();
         player.playOnAwake = false;
         player.isLooping = !isSequentiel;
-        player.Stop();
+        player.Pause();
     }
 
-    public void AddVideoAt(string path, Vecteur3_IIViMaT pos, Vecteur3_IIViMaT rot, Vecteur3_IIViMaT scale)
+    public void LancerMenuActivationVideo(int indexActive)
+    {
+        this.indexActive = indexActive;
+
+        // Activer ou non la vidéo par defaut ?
+        string[] ActivateVideoMenu = { "Activer la vidéo", "Désactiver la vidéo" };
+        Menu.Del handler = ActiveVideo;
+
+        main.menu.AddItems(ActivateVideoMenu, handler);
+    }
+    
+
+    public void ActiveVideo(string value)
+    {
+        MeshRenderer renderer = videos[indexActive].GetComponent<MeshRenderer>();
+
+        if (value == "Désactiver la vidéo")
+            renderer.enabled = false;
+        else
+            renderer.enabled = true;
+    }
+
+    public void AddVideoAt(string path, Vecteur3_IIViMaT pos, Vecteur3_IIViMaT rot, Vecteur3_IIViMaT scale, bool isActive)
     {
         this.AddVideo(path);
         videos[videos.Count - 1].transform.localScale = new Vector3(scale.x, scale.y, scale.z);
@@ -169,6 +199,9 @@ public class Video360 : MonoBehaviour
         videos[videos.Count - 1].transform.Rotate(Vector3.forward, rot.y);
 
         videos[videos.Count - 1].transform.position = new Vector3(pos.x, pos.y, pos.z);
+
+        MeshRenderer renderer = videos[videos.Count - 1].GetComponent<MeshRenderer>();
+        renderer.enabled = isActive;
     }
 
     public void PlayVideo()
@@ -176,6 +209,7 @@ public class Video360 : MonoBehaviour
         if (isSequentiel)
         {
             videos[indexVideoCourante].GetComponent<VideoPlayer>().Play();
+            videos[indexVideoCourante].GetComponent<AudioSource>().Play();
         }
         else
         {
@@ -190,6 +224,7 @@ public class Video360 : MonoBehaviour
     public void PlayVideo(int index)
     {
         videos[index].GetComponent<VideoPlayer>().Play();
+        videos[index].GetComponent<AudioSource>().Play();
     }
 
     public void PauseVideo()
@@ -197,6 +232,7 @@ public class Video360 : MonoBehaviour
         if (isSequentiel)
         {
             videos[indexVideoCourante].GetComponent<VideoPlayer>().Pause();
+            videos[indexVideoCourante].GetComponent<AudioSource>().Pause();
         }
         else
         {

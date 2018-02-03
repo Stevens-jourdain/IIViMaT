@@ -12,7 +12,7 @@ public class MoveObject : MonoBehaviour
     public GameObject[] listOfObject;
 
     int TimeToMove = 0;
-    float scale = 1f;
+    float scale = 1.0f;
 
     public void SetObjects(GameObject[] listOfObject)
     {
@@ -21,11 +21,8 @@ public class MoveObject : MonoBehaviour
 
     public void StartMove()
     {
-        Debug.Log("start");
         TimeToMove = 1;
-        Debug.Log("start 1");
         main.actionEnCours = true;
-        Debug.Log("start 2");
     }
 
     // Update is called once per frame
@@ -89,8 +86,14 @@ public class MoveObject : MonoBehaviour
 
             if (Input.GetKeyUp(KeyCode.KeypadEnter))
             {
+                if (fn != null)
+                {
+                    foreach (GameObject obj in listOfObject)
+                        fn(obj);
+                }
+
                 TimeToMove = 0;
-                main.actionEnCours = false;
+                main.actionEnCours = false;                
             }
 
             // HTC Vive Controller
@@ -104,8 +107,14 @@ public class MoveObject : MonoBehaviour
                 // Si on valide
                 if (main.rightDevice.GetPress(Valve.VR.EVRButtonId.k_EButton_ApplicationMenu))
                 {
+                    if (fn != null)
+                    {
+                        foreach (GameObject obj in listOfObject)
+                            fn(obj);
+                    }
+
                     TimeToMove = 0;
-                    main.actionEnCours = false;
+                    main.actionEnCours = false;                    
                 }
             }
 
@@ -124,9 +133,6 @@ public class MoveObject : MonoBehaviour
                     obj.transform.Translate(position);
                     obj.transform.Rotate(angleRot * 360);
                 }
-
-                if(fn != null)
-                    fn(obj);
             }
         }
 

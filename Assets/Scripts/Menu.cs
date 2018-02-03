@@ -44,7 +44,7 @@ public class Menu : MonoBehaviour {
             itemsObj[i] = Instantiate(ItemMenu_prefabs, transform);
             itemsObj[i].transform.parent = this.transform;
             itemsObj[i].transform.localScale = new Vector3(0.001f, 0.001f, 0.001f);
-            itemsObj[i].transform.position = new Vector3(0, 0.21f - (i * 0.07f), -0.5f);
+            itemsObj[i].transform.position = new Vector3(0, 0.60f - (i * 0.07f), -1.7f);
             itemsObj[i].SetActive(true);           
 
             itemsList[i] = itemsObj[i].GetComponent<ItemMenu>();
@@ -61,22 +61,6 @@ public class Menu : MonoBehaviour {
         nbItems = items.Length;
         indexItem = 0;
         itemsObj = items;
-        /*itemsList = new ItemMenu[nbItems];
-
-        for (int i = 0; i < nbItems; ++i)
-        {
-            itemsObj[i] = Instantiate(ItemMenu_prefabs, transform);
-            itemsObj[i].transform.parent = this.transform;
-            itemsObj[i].transform.localScale = new Vector3(0.001f, 0.001f, 0.001f);
-            itemsObj[i].transform.position = new Vector3(0, 0.21f - (i * 0.07f), -0.5f);
-            itemsObj[i].SetActive(true);
-
-            itemsList[i] = itemsObj[i].GetComponent<ItemMenu>();
-            itemsList[i].SetValue(items[i]);
-        }
-
-        if (nbItems > 0)
-            itemsList[0].Select();*/
     }
 
     void ViderMenu()
@@ -94,6 +78,9 @@ public class Menu : MonoBehaviour {
 
     // Update is called once per frame
     void Update () {
+        if (main.actionEnCours == true)
+            return;
+
         // Selection dans le menu
         if (nbItems > 0)
         {

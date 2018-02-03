@@ -94,14 +94,41 @@ public class Sphere360 : MonoBehaviour {
             if (Input.GetKeyUp(KeyCode.T))
             {
                 Debug.Log("touche T");
-                ShowMenuActionReaction();
+                ShowMenuVideo();
             }
+        }
+    }
+
+    public void ShowMenuVideo()
+    {
+        string[] actionMenu = { "Lancer la vidéo", "Déplacer la vidéo", "Activer/Désactiver", "Action-Réaction"};
+        Menu.Del handler = GestionMenuVideo;
+
+        video360.main.menu.AddItems(actionMenu, handler);
+    }
+
+    public void GestionMenuVideo(string value)
+    {
+        if(value == "Lancer la vidéo")
+        {
+            video360.PlayVideo(video_index);
+        }
+        else if(value == "Déplacer la vidéo")
+        {
+            video360.DeplacerVideo(this.gameObject);
+        }
+        else if(value == "Activer/Désactiver")
+        {
+            video360.LancerMenuActivationVideo(video_index);
+        }
+        else if(value == "Action-Réaction")
+        {
+            ShowMenuActionReaction();
         }
     }
 
     public void ShowMenuActionReaction()
     {
-        Debug.Log("MEEENNUu");
         // On affiche le menu pour enregistrer une action réaction
         string[] actionMenu = { "Entrer dans la sphere", "Sortir de la sphere", "Fin de video" };
         Menu.Del handler = showReaction;
@@ -159,7 +186,7 @@ public class Sphere360 : MonoBehaviour {
 
         // Lister les objets
         Menu.Del handler = choisirObjet;
-        //video360.main.menu.AddItemsObj(listeObjets, handler);
+        video360.main.menu.AddItemsObj(listeObjets, handler);
     }
 
     public void choisirObjet(string objname)
