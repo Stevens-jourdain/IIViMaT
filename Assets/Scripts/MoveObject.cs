@@ -21,7 +21,11 @@ public class MoveObject : MonoBehaviour
 
     public void StartMove()
     {
+        Debug.Log("start");
         TimeToMove = 1;
+        Debug.Log("start 1");
+        main.actionEnCours = true;
+        Debug.Log("start 2");
     }
 
     // Update is called once per frame
@@ -30,8 +34,7 @@ public class MoveObject : MonoBehaviour
         if (TimeToMove == 2)
         {
             Vector3 position = new Vector3(), angleRot = new Vector3();
-            Quaternion rotation = new Quaternion();
-            
+            Quaternion rotation = new Quaternion();            
             
             // scale
             if (Input.GetKeyUp(KeyCode.KeypadPlus))            
@@ -82,10 +85,13 @@ public class MoveObject : MonoBehaviour
                     angleRot.y -= 0.01f;
                 else
                     position.y -= 0.1f;
-            }                       
+            }
 
             if (Input.GetKeyUp(KeyCode.KeypadEnter))
+            {
                 TimeToMove = 0;
+                main.actionEnCours = false;
+            }
 
             // HTC Vive Controller
             if (main.rightDevice != null && main.leftDevice != null)
@@ -99,6 +105,7 @@ public class MoveObject : MonoBehaviour
                 if (main.rightDevice.GetPress(Valve.VR.EVRButtonId.k_EButton_ApplicationMenu))
                 {
                     TimeToMove = 0;
+                    main.actionEnCours = false;
                 }
             }
 

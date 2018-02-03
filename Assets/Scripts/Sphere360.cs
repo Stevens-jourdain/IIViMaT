@@ -9,70 +9,221 @@ public class Sphere360 : MonoBehaviour {
     public Video360 video360;
     public PlayCurve playcurves;
 
+    private string currentAction, currentReaction;
+
     int video_index = -1;
     public void Start()
     {
         video_index = int.Parse(gameObject.name.Replace("Video360_player(Clone)_", ""));
     }
 
-
     public void OnTriggerEnter(Collider other)
     {
-        if(video_index != -1)
-        {
-            if (actionReaction.action_reactions_spheres360.Count > 0)
-            {
-                if (actionReaction.action_reactions_spheres360.ContainsKey(video_index))
-                {
-                    // en fonction de la position
-                    if (actionReaction.action_reactions_spheres360[video_index].ContainsKey(actionReaction.actions_spheres360["enter"]))
-                    {
-                        // Parcourt des réactions possibles
-                        foreach (KeyValuePair<int, List<GameObject>> reaction in actionReaction.action_reactions_spheres360[video_index][actionReaction.actions_spheres360["enter"]])
-                        {
-                            if(reaction.Key == actionReaction.reactions_spheres360["activate"])
-                            {
-                                foreach (GameObject obj in reaction.Value)
-                                {
-                                    obj.SetActive(true);
+        Debug.Log("enter : " + other.tag);
 
-                                    if(obj.name.Contains("Video360_player(Clone)_"))
+        if (video360.main.isPlayMode && other.tag == "MainCamera")
+        {
+            // S'il s'agit de la tete, on applique le système d'action réaction
+            if (video_index != -1)
+            {
+                if (actionReaction.action_reactions_spheres360.Count > 0)
+                {
+                    if (actionReaction.action_reactions_spheres360.ContainsKey(video_index))
+                    {
+                        // en fonction de la position
+                        if (actionReaction.action_reactions_spheres360[video_index].ContainsKey(actionReaction.actions_spheres360["enter"]))
+                        {
+                            // Parcourt des réactions possibles
+                            foreach (KeyValuePair<int, List<GameObject>> reaction in actionReaction.action_reactions_spheres360[video_index][actionReaction.actions_spheres360["enter"]])
+                            {
+                                if (reaction.Key == actionReaction.reactions_spheres360["activate"])
+                                {
+                                    foreach (GameObject obj in reaction.Value)
                                     {
-                                        int index = int.Parse(obj.name.Replace("Video360_player(Clone)_", ""));
-                                        video360.PlayVideo(index);
+                                        obj.SetActive(true);
+
+                                        if (obj.name.Contains("Video360_player(Clone)_"))
+                                        {
+                                            int index = int.Parse(obj.name.Replace("Video360_player(Clone)_", ""));
+                                            video360.PlayVideo(index);
+                                        }
                                     }
                                 }
-                            }
 
-                            if (reaction.Key == actionReaction.reactions_spheres360["desactivate"])
-                            {
-                                foreach (GameObject obj in reaction.Value)
-                                    obj.SetActive(false);
-                            }
-
-                            if (reaction.Key == actionReaction.reactions_spheres360["play_curve"])
-                            {
-                                foreach (GameObject obj in reaction.Value)
+                                if (reaction.Key == actionReaction.reactions_spheres360["desactivate"])
                                 {
-                                    int index = int.Parse(obj.name.Replace("Curve(Clone)_", ""));
-                                    playcurves.Play(index);
+                                    foreach (GameObject obj in reaction.Value)
+                                        obj.SetActive(false);
+                                }
+
+                                if (reaction.Key == actionReaction.reactions_spheres360["play_curve"])
+                                {
+                                    foreach (GameObject obj in reaction.Value)
+                                    {
+                                        int index = int.Parse(obj.name.Replace("Curve(Clone)_", ""));
+                                        playcurves.Play(index);
+                                    }
+                                }
+
+                                if (reaction.Key == actionReaction.reactions_spheres360["tp"])
+                                {
+                                    foreach (GameObject obj in reaction.Value)
+                                        cam.transform.position = obj.transform.position;
                                 }
                             }
+                        }
+                    }
+                }
+            }
+        }        
+    }
 
-                            if (reaction.Key == actionReaction.reactions_spheres360["tp"])
+    public void OnTriggerStay(Collider other)
+    {
+        if (!video360.main.isPlayMode && (other.tag == "RightPad" || other.tag == "LeftPad"))
+        {
+            // S'il s'agit du pad avec le trigger enfoncer
+            if (video360.main.rightDevice != null && video360.main.leftDevice != null)
+            {
+                if (video360.main.rightDevice.GetPress(Valve.VR.EVRButtonId.k_EButton_SteamVR_Trigger) || video360.main.leftDevice.GetPress(Valve.VR.EVRButtonId.k_EButton_SteamVR_Trigger))
+                {
+                    ShowMenuActionReaction();
+                }
+            }
+
+            if (Input.GetKeyUp(KeyCode.T))
+            {
+                Debug.Log("touche T");
+                ShowMenuActionReaction();
+            }
+        }
+    }
+
+    public void ShowMenuActionReaction()
+    {
+        Debug.Log("MEEENNUu");
+        // On affiche le menu pour enregistrer une action réaction
+        string[] actionMenu = { "Entrer dans la sphere", "Sortir de la sphere", "Fin de video" };
+        Menu.Del handler = showReaction;
+
+        video360.main.menu.AddItems(actionMenu, handler);
+    }
+
+    public void showReaction(string action)
+    {
+        if(action == "Entrer dans la sphere")
+        {
+            currentAction = "enter";
+        }
+        else if(action == "Sortir dans la sphere")
+        {
+            currentAction = "exit";
+        }
+        else
+        {
+            currentAction = "end";
+        }
+
+        // Affichage du menu de reaction
+        // On affiche le menu pour enregistrer une action réaction
+        string[] actionMenu = { "Activer un objet", "Desactiver un objet", "Changer de vidéo", "Lancer une courbe" };
+        Menu.Del handler = addReaction;
+
+        video360.main.menu.AddItems(actionMenu, handler);
+    }
+
+    public void addReaction(string reaction)
+    {
+        GameObject[] listeObjets = null;
+
+        if (reaction == "Activer un objet")
+        {
+            currentReaction = "enter";
+            listeObjets = GameObject.FindGameObjectsWithTag("Video360");
+        }
+        else if (reaction == "Desactiver un objet")
+        {
+            currentReaction = "exit";
+            listeObjets = GameObject.FindGameObjectsWithTag("Video360");
+        }
+        else if (reaction == "Changer de vidéo")
+        {
+            currentReaction = "exit";
+            listeObjets = GameObject.FindGameObjectsWithTag("Video360");            
+        }
+        else
+        {
+            currentReaction = "Lancer une courbe";
+            listeObjets = GameObject.FindGameObjectsWithTag("Curve");
+        }
+
+        // Lister les objets
+        Menu.Del handler = choisirObjet;
+        //video360.main.menu.AddItemsObj(listeObjets, handler);
+    }
+
+    public void choisirObjet(string objname)
+    {
+        // Enregistrer l'action-reaction
+
+    }
+
+    public void OnTriggerExit(Collider other)
+    {
+        if (video360.main.isPlayMode && other.tag == "MainCamera")
+        {
+            // S'il s'agit de la tete, on applique le système d'action réaction
+            if (video_index != -1)
+            {
+                if (actionReaction.action_reactions_spheres360.Count > 0)
+                {
+                    if (actionReaction.action_reactions_spheres360.ContainsKey(video_index))
+                    {
+                        // en fonction de la position
+                        if (actionReaction.action_reactions_spheres360[video_index].ContainsKey(actionReaction.actions_spheres360["exit"]))
+                        {
+                            // Parcourt des réactions possibles
+                            foreach (KeyValuePair<int, List<GameObject>> reaction in actionReaction.action_reactions_spheres360[video_index][actionReaction.actions_spheres360["enter"]])
                             {
-                                foreach (GameObject obj in reaction.Value)
-                                    cam.transform.position = obj.transform.position;
+                                if (reaction.Key == actionReaction.reactions_spheres360["activate"])
+                                {
+                                    foreach (GameObject obj in reaction.Value)
+                                    {
+                                        obj.SetActive(true);
+
+                                        if (obj.name.Contains("Video360_player(Clone)_"))
+                                        {
+                                            int index = int.Parse(obj.name.Replace("Video360_player(Clone)_", ""));
+                                            video360.PlayVideo(index);
+                                        }
+                                    }
+                                }
+
+                                if (reaction.Key == actionReaction.reactions_spheres360["desactivate"])
+                                {
+                                    foreach (GameObject obj in reaction.Value)
+                                        obj.SetActive(false);
+                                }
+
+                                if (reaction.Key == actionReaction.reactions_spheres360["play_curve"])
+                                {
+                                    foreach (GameObject obj in reaction.Value)
+                                    {
+                                        int index = int.Parse(obj.name.Replace("Curve(Clone)_", ""));
+                                        playcurves.Play(index);
+                                    }
+                                }
+
+                                if (reaction.Key == actionReaction.reactions_spheres360["tp"])
+                                {
+                                    foreach (GameObject obj in reaction.Value)
+                                        cam.transform.position = obj.transform.position;
+                                }
                             }
                         }
                     }
                 }
             }
         }
-    }
-
-    public void OnTriggerExit(Collider other)
-    {
-
     }
 }

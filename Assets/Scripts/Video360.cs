@@ -12,21 +12,21 @@ public class Video360 : MonoBehaviour
     public GameObject cam;
 
     public GameObject prefab_player;
-    private List<GameObject> videos;
+    public List<GameObject> videos = null;
 
     private int indexVideoCourante = 0;
 
     public Main main;
 
     // Pour déplacer la vidéo
-    MoveObject mo;
+    public MoveObject mo = null;
 
     // Use this for initialization
     void Start()
     {
-        videos = new List<GameObject>();
-
-        mo = new MoveObject();
+        videos = new List<GameObject>();    
+                
+        mo.fn = setPlay;
         mo.main = main;
     }
 
@@ -118,11 +118,13 @@ public class Video360 : MonoBehaviour
     public void AddVideo(string path)
     {
         GameObject video = Instantiate<GameObject>(prefab_player);
+        video.name += ("_"+videos.Count);
+        video.SetActive(true);
 
         var videoPlayer = video.GetComponent<VideoPlayer>();
-        videoPlayer.playOnAwake = false;
+        videoPlayer.playOnAwake = true;
         videoPlayer.url = main.config.path_to_import + "/Video360/" + path;
-        videoPlayer.isLooping = !isSequentiel;
+        videoPlayer.isLooping = true;
         videoPlayer.audioOutputMode = VideoAudioOutputMode.AudioSource;
 
         var audioPlayer = video.GetComponent<AudioSource>();
@@ -135,14 +137,7 @@ public class Video360 : MonoBehaviour
         videos.Add(video);
 
         if (isSequentiel)
-        {
-            if (videos.Count == 1)
-            {
-                videoPlayer.Play();
-                audioPlayer.Play();
-                video.transform.position = cam.transform.position;
-            }
-
+        { 
             // A la fin de la lecture on passe à la suivante
             VideoPlayer.EventHandler hand = NextVideo;
             videoPlayer.loopPointReached += hand;
@@ -154,6 +149,14 @@ public class Video360 : MonoBehaviour
         mo.SetObjects(arr);
         main.ShowMessage("Mise en place de la vidéo dans l'espace.");
         mo.StartMove();
+    }
+
+    public void setPlay(GameObject videoObj)
+    {
+        VideoPlayer player = videoObj.GetComponent<VideoPlayer>();
+        player.playOnAwake = false;
+        player.isLooping = !isSequentiel;
+        player.Stop();
     }
 
     public void AddVideoAt(string path, Vecteur3_IIViMaT pos, Vecteur3_IIViMaT rot, Vecteur3_IIViMaT scale)

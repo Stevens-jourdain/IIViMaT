@@ -119,6 +119,7 @@ public class VAirDraw : MonoBehaviour {
             {
                 // Instantiate prefabs
                 GameObject obj = Instantiate(curvePrefabs);
+                obj.name += ("_" + indexColor);
 
                 // Initialize
                 curves[indexColor] = obj.GetComponent<Curve>();
@@ -153,7 +154,8 @@ public class VAirDraw : MonoBehaviour {
 
     void Update()
     {
-        mo.MoveUpdate();
+        if (mo != null)
+            mo.MoveUpdate();
     }
     public void ApplyTransformToCurve(GameObject curve)
     {

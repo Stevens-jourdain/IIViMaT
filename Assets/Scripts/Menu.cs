@@ -55,6 +55,30 @@ public class Menu : MonoBehaviour {
             itemsList[0].Select();
     }
 
+    public void AddItemsObj(GameObject[] items, Del handler)
+    {
+        this.handler = handler;
+        nbItems = items.Length;
+        indexItem = 0;
+        itemsObj = items;
+        /*itemsList = new ItemMenu[nbItems];
+
+        for (int i = 0; i < nbItems; ++i)
+        {
+            itemsObj[i] = Instantiate(ItemMenu_prefabs, transform);
+            itemsObj[i].transform.parent = this.transform;
+            itemsObj[i].transform.localScale = new Vector3(0.001f, 0.001f, 0.001f);
+            itemsObj[i].transform.position = new Vector3(0, 0.21f - (i * 0.07f), -0.5f);
+            itemsObj[i].SetActive(true);
+
+            itemsList[i] = itemsObj[i].GetComponent<ItemMenu>();
+            itemsList[i].SetValue(items[i]);
+        }
+
+        if (nbItems > 0)
+            itemsList[0].Select();*/
+    }
+
     void ViderMenu()
     {
         for(int i = 0; i < nbItems; ++i)

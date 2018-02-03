@@ -30,6 +30,9 @@ public class Main : MonoBehaviour {
     // Action en cours, permet d'éviter le conflit de bouton avec les interactions
     public bool actionEnCours = false;
 
+    // Mode play ou edit ?
+    public bool isPlayMode = false;
+
     void FixedUpdate()
     {
         // Initialisation des pads HTC Vive
@@ -286,7 +289,8 @@ public class Main : MonoBehaviour {
 			// Show list to content's creator
 			menu.AddItems(allFilesCurves, handler);
 		} 
-		else {
+		else if(str == "Charger video")
+        {
 			ListFilesFromDir lfd = new ListFilesFromDir(config.path_to_import + "/Video360/");
 			string[] allFilesCurves = lfd.files;
 
@@ -295,10 +299,24 @@ public class Main : MonoBehaviour {
 			// Show list to content's creator
 			menu.AddItems(allFilesCurves, handler);
 		}
+        else
+        {
+            isPlayMode = !isPlayMode;
+
+            if(isPlayMode)
+            {
+                // Reset de tous les index, lancement de la lecture
+
+            }
+            else
+            {
+
+            }
+        }
 	}
 
 	public void MenuPad(){		
-		string[] LoadingMenu = { "Charger courbe", "Charger video" };
+		string[] LoadingMenu = { "Charger courbe", "Charger video", isPlayMode ? "Passer en mode edit" : "Passer en mode play" };
 		Menu.Del handler = LoadMenu;
 
 		menu.AddItems(LoadingMenu, handler);		
