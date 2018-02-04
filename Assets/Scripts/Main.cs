@@ -6,6 +6,8 @@ using UnityEngine.Video;
 using System.IO;
 using UnityEditor;
 
+using SimpleJSON;
+
 public class Main : MonoBehaviour {
 
     // Configuration générale
@@ -25,6 +27,10 @@ public class Main : MonoBehaviour {
     public SteamVR_TrackedObject left = null, right = null;
     public SteamVR_Controller.Device leftDevice = null, rightDevice = null;
 
+    // Action réaction
+    public ActionReaction actionReaction;
+
+    // Menu
 	public Menu menu;
 
     // Action en cours, permet d'éviter le conflit de bouton avec les interactions
@@ -48,31 +54,85 @@ public class Main : MonoBehaviour {
     void ChargerFichier(string filepath)
     {
         // Ouverture en JSON
-        string dataAsJson = File.ReadAllText(filepath);
-        IIViMaTFile file = JsonUtility.FromJson<IIViMaTFile>(dataAsJson);
+        string dataAsJson = File.ReadAllText(config.path_to_import + "/Projects/" + filepath);
+        var file = JSON.Parse(dataAsJson);
 
         // Application
-        video360.isSequentiel = file.isSequentiel;
+        video360.isSequentiel = file["isSequentiel"].AsBool;
 
-        int nbVideos = file.videos.Length;
+        int nbVideos = file["videos"].Count;
         for (int i = 0; i < nbVideos; ++i)
         {
             // Ajout de la vidéo à la scène
-            video360.AddVideoAt(file.videos[i].path, file.videos[i].position, file.videos[i].rotation, file.videos[i].scale, file.videos[i].isActive);
+            video360.AddVideoAt(file["videos"][i]["path"].Value, file["videos"][i]["position"].ReadVector3(), file["videos"][i]["rotation"].ReadVector3(), file["videos"][i]["scale"].ReadVector3(), file["videos"][i]["isActive"].AsBool);
         }
 
         // Chargement des courbes
-        for(int i = 0; i < file.courbes.Length; ++i)
+        for (int i = 0; i < file["courbes"].Count; ++i)
         {
             GameObject obj = Instantiate(curvePrefabs);
             Curve curve = obj.GetComponent<Curve>();
-            curve.SetColor(new Color(file.courbes[i].color.x, file.courbes[i].color.y, file.courbes[i].color.z));
+            Vector3 rgb = file["courbes"][i]["color"].ReadVector3();
+            curve.SetColor(new Color(rgb.x, rgb.y, rgb.z));
 
-            for(int j = 0; j < file.courbes[i].points.Length; ++i)
+            for (int j = 0; j < file["courbes"][i]["points"].Count; ++i)
             {
-                Vector3 point = new Vector3(file.courbes[i].points[j].x, file.courbes[i].points[j].y, file.courbes[i].points[j].z);
-                Vector3 normal = new Vector3(file.courbes[i].normals[j].x, file.courbes[i].normals[j].y, file.courbes[i].normals[j].z);
+                Vector3 point = file["courbes"][i]["points"][j].ReadVector3();
+                Vector3 normal = file["courbes"][i]["normals"][j].ReadVector3();
                 curve.AddPointAndNormal(point, normal);
+            }
+        }
+
+        // Chargement des actions-réactions
+        if (file["actionReaction"]["action_reactions_courbes"].IsObject)
+        {
+            foreach (JSONNode source in file["actionReaction"]["action_reactions_courbes"].AsObject.Keys)
+            {
+                foreach (JSONNode action in file["actionReaction"]["action_reactions_courbes"][source.Value].Keys)
+                {
+                    foreach (JSONNode reaction in file["actionReaction"]["action_reactions_courbes"][source.Value][action.Value].Keys)
+                    {
+                        foreach (JSONNode name_obj in file["actionReaction"]["action_reactions_courbes"][source.Value][action.Value][reaction.Value].AsArray)
+                        {
+                            if (!actionReaction.action_reactions_courbes.ContainsKey(source.AsInt))
+                                actionReaction.action_reactions_courbes.Add(source.AsInt, new Dictionary<int, Dictionary<int, List<GameObject>>>());
+
+                            if (!actionReaction.action_reactions_courbes[source.AsInt].ContainsKey(action.AsInt))
+                                actionReaction.action_reactions_courbes[source.AsInt].Add(action.AsInt, new Dictionary<int, List<GameObject>>());
+
+                            if (!actionReaction.action_reactions_courbes[source.AsInt][action.AsInt].ContainsKey(reaction.AsInt))
+                                actionReaction.action_reactions_courbes[source.AsInt][action.AsInt].Add(reaction.AsInt, new List<GameObject>());
+
+                            actionReaction.action_reactions_courbes[source.AsInt][action.AsInt][reaction.AsInt].Add(GameObject.Find(name_obj.Value));
+                        }
+                    }
+                }
+            }
+        }
+
+        if (file["actionReaction"]["action_reactions_spheres360"].IsObject)
+        {
+            foreach (JSONNode source in file["actionReaction"]["action_reactions_spheres360"].AsObject.Keys)
+            {
+                foreach (JSONNode action in file["actionReaction"]["action_reactions_spheres360"][source.Value].Keys)
+                {
+                    foreach (JSONNode reaction in file["actionReaction"]["action_reactions_spheres360"][source.Value][action.Value].Keys)
+                    {
+                        foreach (JSONNode name_obj in file["actionReaction"]["action_reactions_spheres360"][source.Value][action.Value][reaction.Value].AsArray)
+                        {
+                            if (!actionReaction.action_reactions_spheres360.ContainsKey(source.AsInt))
+                                actionReaction.action_reactions_spheres360.Add(source.AsInt, new Dictionary<int, Dictionary<int, List<GameObject>>>());
+
+                            if (!actionReaction.action_reactions_spheres360[source.AsInt].ContainsKey(action.AsInt))
+                                actionReaction.action_reactions_spheres360[source.AsInt].Add(action.AsInt, new Dictionary<int, List<GameObject>>());
+
+                            if (!actionReaction.action_reactions_spheres360[source.AsInt][action.AsInt].ContainsKey(reaction.AsInt))
+                                actionReaction.action_reactions_spheres360[source.AsInt][action.AsInt].Add(reaction.AsInt, new List<GameObject>());
+
+                            actionReaction.action_reactions_spheres360[source.AsInt][action.AsInt][reaction.AsInt].Add(GameObject.Find(name_obj.Value));
+                        }
+                    }
+                }
             }
         }
     }
@@ -178,11 +238,72 @@ public class Main : MonoBehaviour {
         // Enregistrement des modèles
 
         // Enregistrement des actions-réactions
+        file.actionReaction = new ActionReactionJSON();
+
+        if (actionReaction.action_reactions_courbes.Count > 0)
+        {
+            file.actionReaction.action_reactions_courbes = new Dictionary<int, Dictionary<int, Dictionary<int, List<string>>>>();
+
+            foreach (KeyValuePair<int, Dictionary<int, Dictionary<int, List<GameObject>>>> source in actionReaction.action_reactions_courbes)
+            {
+                foreach (KeyValuePair<int, Dictionary<int, List<GameObject>>> action in source.Value)
+                {
+                    foreach (KeyValuePair<int, List<GameObject>> reaction in action.Value)
+                    {
+                        foreach (GameObject obj in reaction.Value)
+                        {
+                            if (!file.actionReaction.action_reactions_courbes.ContainsKey(source.Key))
+                                file.actionReaction.action_reactions_courbes.Add(source.Key, new Dictionary<int, Dictionary<int, List<string>>>());
+
+                            if (!file.actionReaction.action_reactions_courbes[source.Key].ContainsKey(action.Key))
+                                file.actionReaction.action_reactions_courbes[source.Key].Add(action.Key, new Dictionary<int, List<string>>());
+
+                            if (!file.actionReaction.action_reactions_courbes[source.Key][action.Key].ContainsKey(reaction.Key))
+                                file.actionReaction.action_reactions_courbes[source.Key][action.Key].Add(reaction.Key, new List<string>());
+
+                            file.actionReaction.action_reactions_courbes[source.Key][action.Key][reaction.Key].Add(obj.name);
+                        }
+                    }
+                }
+            }
+        }
+
+        if (actionReaction.action_reactions_spheres360.Count > 0)
+        {
+            file.actionReaction.action_reactions_spheres360 = new Dictionary<int, Dictionary<int, Dictionary<int, List<string>>>>();
+
+            foreach (KeyValuePair<int, Dictionary<int, Dictionary<int, List<GameObject>>>> source in actionReaction.action_reactions_spheres360)
+            {
+                foreach (KeyValuePair<int, Dictionary<int, List<GameObject>>> action in source.Value)
+                {
+                    foreach (KeyValuePair<int, List<GameObject>> reaction in action.Value)
+                    {
+                        foreach (GameObject obj in reaction.Value)
+                        {
+                            if (!file.actionReaction.action_reactions_spheres360.ContainsKey(source.Key))
+                                file.actionReaction.action_reactions_spheres360.Add(source.Key, new Dictionary<int, Dictionary<int, List<string>>>());
+
+                            if (!file.actionReaction.action_reactions_spheres360[source.Key].ContainsKey(action.Key))
+                                file.actionReaction.action_reactions_spheres360[source.Key].Add(action.Key, new Dictionary<int, List<string>>());
+
+                            if (!file.actionReaction.action_reactions_spheres360[source.Key][action.Key].ContainsKey(reaction.Key))
+                                file.actionReaction.action_reactions_spheres360[source.Key][action.Key].Add(reaction.Key, new List<string>());
+
+                            file.actionReaction.action_reactions_spheres360[source.Key][action.Key][reaction.Key].Add(obj.name);
+                        }
+                    }
+                }
+            }
+        }
+        else
+        {
+            Debug.Log("Pas d'action dans les spheres...");
+        }
 
         var path = EditorUtility.SaveFilePanel("Enregistrer votre projet", "", "", "IIViMaT");
         StreamWriter stream = File.CreateText(path);
-
-        string json = JsonUtility.ToJson(file);
+                
+        string json = file.ToJSON().ToString();
         stream.WriteLine(json);
         stream.Close();
     }

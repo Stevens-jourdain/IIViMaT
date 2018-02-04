@@ -14,7 +14,7 @@ public class VAirDraw : MonoBehaviour {
 
     private float scale = 1f;
     
-    private MoveObject mo;
+    public MoveObject mo = null;
 
     private void ReadWithoutComment(ref StreamReader reader, ref string line)
     {
@@ -164,7 +164,6 @@ public class VAirDraw : MonoBehaviour {
 
     void Start()
     {
-        mo = new MoveObject();
         MoveObject.Handler hand = ApplyTransformToCurve;
 
         mo.fn = hand;

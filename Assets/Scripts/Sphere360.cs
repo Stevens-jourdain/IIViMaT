@@ -2,9 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Sphere360 : MonoBehaviour {
-
-    public ActionReaction actionReaction;
+public class Sphere360 : MonoBehaviour {    
     public GameObject cam;
     public Video360 video360;
     public PlayCurve playcurves;
@@ -26,17 +24,17 @@ public class Sphere360 : MonoBehaviour {
             // S'il s'agit de la tete, on applique le système d'action réaction
             if (video_index != -1)
             {
-                if (actionReaction.action_reactions_spheres360.Count > 0)
+                if (video360.main.actionReaction.action_reactions_spheres360.Count > 0)
                 {
-                    if (actionReaction.action_reactions_spheres360.ContainsKey(video_index))
+                    if (video360.main.actionReaction.action_reactions_spheres360.ContainsKey(video_index))
                     {
                         // en fonction de la position
-                        if (actionReaction.action_reactions_spheres360[video_index].ContainsKey(actionReaction.actions_spheres360["enter"]))
+                        if (video360.main.actionReaction.action_reactions_spheres360[video_index].ContainsKey(video360.main.actionReaction.actions_spheres360["enter"]))
                         {
                             // Parcourt des réactions possibles
-                            foreach (KeyValuePair<int, List<GameObject>> reaction in actionReaction.action_reactions_spheres360[video_index][actionReaction.actions_spheres360["enter"]])
+                            foreach (KeyValuePair<int, List<GameObject>> reaction in video360.main.actionReaction.action_reactions_spheres360[video_index][video360.main.actionReaction.actions_spheres360["enter"]])
                             {
-                                if (reaction.Key == actionReaction.reactions_spheres360["activate"])
+                                if (reaction.Key == video360.main.actionReaction.reactions_spheres360["activate"])
                                 {
                                     foreach (GameObject obj in reaction.Value)
                                     {
@@ -50,13 +48,13 @@ public class Sphere360 : MonoBehaviour {
                                     }
                                 }
 
-                                if (reaction.Key == actionReaction.reactions_spheres360["desactivate"])
+                                if (reaction.Key == video360.main.actionReaction.reactions_spheres360["desactivate"])
                                 {
                                     foreach (GameObject obj in reaction.Value)
                                         obj.SetActive(false);
                                 }
 
-                                if (reaction.Key == actionReaction.reactions_spheres360["play_curve"])
+                                if (reaction.Key == video360.main.actionReaction.reactions_spheres360["play_curve"])
                                 {
                                     foreach (GameObject obj in reaction.Value)
                                     {
@@ -65,7 +63,7 @@ public class Sphere360 : MonoBehaviour {
                                     }
                                 }
 
-                                if (reaction.Key == actionReaction.reactions_spheres360["tp"])
+                                if (reaction.Key == video360.main.actionReaction.reactions_spheres360["tp"])
                                 {
                                     foreach (GameObject obj in reaction.Value)
                                         cam.transform.position = obj.transform.position;
@@ -192,32 +190,39 @@ public class Sphere360 : MonoBehaviour {
     {
         // Enregistrer l'action-reaction
         GameObject obj = GameObject.Find(objname);
-        
-        actionReaction.AddActionReactionsSphere360(video_index, actionReaction.actions_spheres360[currentAction], actionReaction.reactions_spheres360[currentReaction], obj);
+
+        video360.main.actionReaction.AddActionReactionsSphere360(video_index, video360.main.actionReaction.actions_spheres360[currentAction], video360.main.actionReaction.reactions_spheres360[currentReaction], obj);
     }
 
     public void OnTriggerExit(Collider other)
     {
+        Debug.Log("Exit : " + other.tag);
         if (video360.main.isPlayMode && other.tag == "MainCamera")
         {
             // S'il s'agit de la tete, on applique le système d'action réaction
             if (video_index != -1)
             {
-                if (actionReaction.action_reactions_spheres360.Count > 0)
+                if (video360.main.actionReaction.action_reactions_spheres360.Count > 0)
                 {
-                    if (actionReaction.action_reactions_spheres360.ContainsKey(video_index))
+                    Debug.Log("Il y a une interaction ");
+
+                    if (video360.main.actionReaction.action_reactions_spheres360.ContainsKey(video_index))
                     {
+                        Debug.Log("avec cette vidéo");
                         // en fonction de la position
-                        if (actionReaction.action_reactions_spheres360[video_index].ContainsKey(actionReaction.actions_spheres360["exit"]))
+                        if (video360.main.actionReaction.action_reactions_spheres360[video_index].ContainsKey(video360.main.actionReaction.actions_spheres360["exit"]))
                         {
+
+                            Debug.Log("quand on en sort");
+
                             // Parcourt des réactions possibles
-                            foreach (KeyValuePair<int, List<GameObject>> reaction in actionReaction.action_reactions_spheres360[video_index][actionReaction.actions_spheres360["enter"]])
+                            foreach (KeyValuePair<int, List<GameObject>> reaction in video360.main.actionReaction.action_reactions_spheres360[video_index][video360.main.actionReaction.actions_spheres360["exit"]])
                             {
-                                if (reaction.Key == actionReaction.reactions_spheres360["activate"])
+                                if (reaction.Key == video360.main.actionReaction.reactions_spheres360["activate"])
                                 {
                                     foreach (GameObject obj in reaction.Value)
                                     {
-                                        obj.SetActive(true);
+                                        obj.GetComponent<Renderer>().enabled = true;
 
                                         if (obj.name.Contains("Video360_player(Clone)_"))
                                         {
@@ -227,13 +232,13 @@ public class Sphere360 : MonoBehaviour {
                                     }
                                 }
 
-                                if (reaction.Key == actionReaction.reactions_spheres360["desactivate"])
+                                if (reaction.Key == video360.main.actionReaction.reactions_spheres360["desactivate"])
                                 {
                                     foreach (GameObject obj in reaction.Value)
-                                        obj.SetActive(false);
+                                        obj.GetComponent<Renderer>().enabled = false;
                                 }
 
-                                if (reaction.Key == actionReaction.reactions_spheres360["play_curve"])
+                                if (reaction.Key == video360.main.actionReaction.reactions_spheres360["play_curve"])
                                 {
                                     foreach (GameObject obj in reaction.Value)
                                     {
@@ -242,10 +247,16 @@ public class Sphere360 : MonoBehaviour {
                                     }
                                 }
 
-                                if (reaction.Key == actionReaction.reactions_spheres360["tp"])
+                                if (reaction.Key == video360.main.actionReaction.reactions_spheres360["tp"])
                                 {
+                                    Debug.Log("Il s'agit d'une lecture ");
                                     foreach (GameObject obj in reaction.Value)
+                                    {
+                                        Debug.Log("TP à l'emplacement : " + obj.transform.position);
                                         cam.transform.position = obj.transform.position;
+                                        int index_autre_video = int.Parse(obj.name.Replace("Video360_player(Clone)_", ""));
+                                        video360.PlayVideo(index_autre_video);
+                                    }
                                 }
                             }
                         }

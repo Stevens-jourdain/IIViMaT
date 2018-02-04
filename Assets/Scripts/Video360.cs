@@ -120,8 +120,14 @@ public class Video360 : MonoBehaviour
 
     public void AddVideo(string path)
     {
+        GameObject video = AddToScene(path);
+        DeplacerVideo(video);
+    }
+
+    public GameObject AddToScene(string path)
+    {
         GameObject video = Instantiate<GameObject>(prefab_player);
-        video.name += ("_"+videos.Count);
+        video.name += ("_" + videos.Count);
         video.SetActive(true);
 
         var videoPlayer = video.GetComponent<VideoPlayer>();
@@ -140,13 +146,13 @@ public class Video360 : MonoBehaviour
         videos.Add(video);
 
         if (isSequentiel)
-        { 
+        {
             // A la fin de la lecture on passe à la suivante
             VideoPlayer.EventHandler hand = NextVideo;
             videoPlayer.loopPointReached += hand;
         }
-        
-        DeplacerVideo(video);       
+
+        return video;
     }
 
     public void DeplacerVideo(GameObject video)
@@ -189,19 +195,21 @@ public class Video360 : MonoBehaviour
             renderer.enabled = true;
     }
 
-    public void AddVideoAt(string path, Vecteur3_IIViMaT pos, Vecteur3_IIViMaT rot, Vecteur3_IIViMaT scale, bool isActive)
+    public void AddVideoAt(string path, Vector3 pos, Vector3 rot, Vector3 scale, bool isActive)
     {
-        this.AddVideo(path);
-        videos[videos.Count - 1].transform.localScale = new Vector3(scale.x, scale.y, scale.z);
+        this.AddToScene(path);
+        videos[videos.Count - 1].transform.localScale = scale;
 
         videos[videos.Count - 1].transform.Rotate(Vector3.right, rot.x);
         videos[videos.Count - 1].transform.Rotate(Vector3.up, rot.y);
         videos[videos.Count - 1].transform.Rotate(Vector3.forward, rot.y);
 
-        videos[videos.Count - 1].transform.position = new Vector3(pos.x, pos.y, pos.z);
+        videos[videos.Count - 1].transform.position = pos;
 
         MeshRenderer renderer = videos[videos.Count - 1].GetComponent<MeshRenderer>();
         renderer.enabled = isActive;
+
+        PauseVideo(videos.Count - 1);
     }
 
     public void PlayVideo()
@@ -242,5 +250,11 @@ public class Video360 : MonoBehaviour
                 v.GetComponent<AudioSource>().Pause();
             }
         }
+    }
+
+    public void PauseVideo(int index)
+    {        
+       videos[index].GetComponent<VideoPlayer>().Pause();
+       videos[index].GetComponent<AudioSource>().Pause();       
     }
 }
