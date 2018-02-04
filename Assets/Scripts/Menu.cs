@@ -151,7 +151,7 @@ public class Menu : MonoBehaviour {
                         itemsObj[indexItem].GetComponent<ToggleShowAnimation>().StopperAnimation();
 
                         // Objet suivant
-                        indexItem = (indexItem + 1) % nbItems;
+                        indexItem = (indexItem + 1);
 
                         // On regarde l'objet
                         cam.transform.LookAt(itemsObj[indexItem].transform);
@@ -162,7 +162,7 @@ public class Menu : MonoBehaviour {
                     else
                     {
                         itemsList[indexItem].Unselect();
-                        indexItem = (indexItem + 1) % nbItems;
+                        indexItem = (indexItem + 1);
                         itemsList[indexItem].Select();
 
                         if (indexItem > 5)
@@ -179,7 +179,7 @@ public class Menu : MonoBehaviour {
                     value = itemsObj[indexItem].name;
                 else
                     value = itemsList[indexItem].GetValue();
-
+                
                 ViderMenu();
                 handler(value);                
             }

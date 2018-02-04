@@ -417,7 +417,7 @@ public class Main : MonoBehaviour {
 		} 
 		else if(str == "Charger video")
         {
-			ListFilesFromDir lfd = new ListFilesFromDir(config.path_to_import + "/Video360/");
+            ListFilesFromDir lfd = new ListFilesFromDir(config.path_to_import + "/Video360/");
 			string[] allFilesCurves = lfd.files;
 
 			Menu.Del handler = video360.AddVideo;

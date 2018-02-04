@@ -303,6 +303,8 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Assets\RockVR\Video\Editor\VideoCaptureEditor.cs" />
+    <Compile Include="Assets\RockVR\Video\Editor\VideoCaptureMenuEditor.cs" />
     <Compile Include="Assets\SteamVR\Editor\SteamVR_Editor.cs" />
     <Compile Include="Assets\SteamVR\Editor\SteamVR_Preferences.cs" />
     <Compile Include="Assets\SteamVR\Editor\SteamVR_RenderModelEditor.cs" />
@@ -311,6 +313,14 @@
     <Compile Include="Assets\SteamVR\Editor\SteamVR_Update.cs" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="Assets\RockVR\Video\Shaders\CopyReverse.shader" />
+    <None Include="Assets\RockVR\Video\Shaders\Cubemap2Equirectangular.shader" />
+    <None Include="Assets\RockVR\Video\Shaders\Cubemap2EquirectangularPro.shader" />
+    <None Include="Assets\RockVR\Video\Shaders\CubemapDisplayPro.shader" />
+    <None Include="Assets\RockVR\Video\Shaders\CubemapToCylindrical.shader" />
+    <None Include="Assets\RockVR\Video\Shaders\DownsamplePro.shader" />
+    <None Include="Assets\RockVR\Video\Shaders\FlippingTexture.shader" />
+    <None Include="Assets\RockVR\Video\Shaders\Stereoscopic.shader" />
     <None Include="Assets\Shader\Insideout.shader" />
     <None Include="Assets\SteamVR\InteractionSystem\Core\Shaders\SeeThru.shader" />
     <None Include="Assets\SteamVR\InteractionSystem\Core\Shaders\Silhouette.shader" />

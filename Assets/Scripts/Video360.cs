@@ -28,15 +28,15 @@ public class Video360 : MonoBehaviour
     public void Start()
     {
         videos = new List<GameObject>();
-        
-        mo.fn = setPlay;
+
         mo.main = main;
     }
 
     // Update is called once per frame
     void Update()
     {
-        mo.MoveUpdate();
+        if(mo != null && mo.isVideo)
+            mo.MoveUpdate();
 
         // S'il n'y a pas de vidéo, ou s'il y a un menu, ou s'il y a une main mise sur l'interaction, pas d'interaction ici
         if (videos.Count == 0 || main.menu.nbItems > 0 || main.actionEnCours)
@@ -157,8 +157,13 @@ public class Video360 : MonoBehaviour
 
     public void DeplacerVideo(GameObject video)
     {
+        MoveObject.Handler hand = setPlay;
+        mo.fn = hand;
+
         GameObject[] arr = new GameObject[1];
         arr[0] = video;
+
+        mo.isVideo = true;
 
         mo.SetObjects(arr);
         main.ShowMessage("Mise en place de la vidéo dans l'espace.");

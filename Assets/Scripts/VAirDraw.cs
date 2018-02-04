@@ -146,6 +146,11 @@ public class VAirDraw : MonoBehaviour {
         // Close reader
         reader.Close();
 
+        MoveObject.Handler hand = ApplyTransformToCurve;
+        mo.fn = hand;
+
+        mo.isVideo = false;
+
         // Set object to move
         mo.SetObjects(GameObject.FindGameObjectsWithTag("Curve"));
         main.ShowMessage("Mise en place des courbes dans l'espace.");
@@ -154,7 +159,7 @@ public class VAirDraw : MonoBehaviour {
 
     void Update()
     {
-        if (mo != null)
+        if (mo != null && !mo.isVideo)
             mo.MoveUpdate();
     }
     public void ApplyTransformToCurve(GameObject curve)
@@ -163,10 +168,7 @@ public class VAirDraw : MonoBehaviour {
     }
 
     void Start()
-    {
-        MoveObject.Handler hand = ApplyTransformToCurve;
-
-        mo.fn = hand;
+    {        
         mo.main = main;
     }
 

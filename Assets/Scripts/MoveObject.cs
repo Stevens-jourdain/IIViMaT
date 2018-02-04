@@ -14,6 +14,8 @@ public class MoveObject : MonoBehaviour
     int TimeToMove = 0;
     float scale = 1.0f;
 
+    public bool isVideo = false;
+
     public void SetObjects(GameObject[] listOfObject)
     {
         this.listOfObject = listOfObject;
