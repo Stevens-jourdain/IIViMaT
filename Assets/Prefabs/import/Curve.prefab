@@ -19,6 +19,7 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 4398650663081054}
+  - component: {fileID: 114622798470254830}
   - component: {fileID: 114413618038836208}
   - component: {fileID: 120024392468123664}
   - component: {fileID: 65799557438227218}
@@ -67,6 +68,17 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   IsPadLeftContact: 0
   IsPadRightContact: 0
+--- !u!114 &114622798470254830
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1936262455626414}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b2d56f190af97aa478cdec22f71bd256, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!120 &120024392468123664
 LineRenderer:
   m_ObjectHideFlags: 1

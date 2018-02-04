@@ -11,8 +11,8 @@ public class Sphere360 : MonoBehaviour {
 
     private string currentAction, currentReaction;
 
-    int video_index = -1;
-    public void Start()
+    public int video_index = -1;
+    public void Awake()
     {
         video_index = int.Parse(gameObject.name.Replace("Video360_player(Clone)_", ""));
     }
@@ -93,7 +93,6 @@ public class Sphere360 : MonoBehaviour {
 
             if (Input.GetKeyUp(KeyCode.T))
             {
-                Debug.Log("touche T");
                 ShowMenuVideo();
             }
         }
@@ -148,7 +147,7 @@ public class Sphere360 : MonoBehaviour {
         }
         else
         {
-            currentAction = "end";
+            currentAction = "end_of_video";
         }
 
         // Affichage du menu de reaction
@@ -165,22 +164,22 @@ public class Sphere360 : MonoBehaviour {
 
         if (reaction == "Activer un objet")
         {
-            currentReaction = "enter";
+            currentReaction = "activate";
             listeObjets = GameObject.FindGameObjectsWithTag("Video360");
         }
         else if (reaction == "Desactiver un objet")
         {
-            currentReaction = "exit";
+            currentReaction = "desactivate";
             listeObjets = GameObject.FindGameObjectsWithTag("Video360");
         }
         else if (reaction == "Changer de vidéo")
         {
-            currentReaction = "exit";
+            currentReaction = "tp";
             listeObjets = GameObject.FindGameObjectsWithTag("Video360");            
         }
         else
         {
-            currentReaction = "Lancer une courbe";
+            currentReaction = "play_curve";
             listeObjets = GameObject.FindGameObjectsWithTag("Curve");
         }
 
@@ -192,7 +191,9 @@ public class Sphere360 : MonoBehaviour {
     public void choisirObjet(string objname)
     {
         // Enregistrer l'action-reaction
-
+        GameObject obj = GameObject.Find(objname);
+        
+        actionReaction.AddActionReactionsSphere360(video_index, actionReaction.actions_spheres360[currentAction], actionReaction.reactions_spheres360[currentReaction], obj);
     }
 
     public void OnTriggerExit(Collider other)

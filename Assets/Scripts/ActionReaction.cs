@@ -20,26 +20,32 @@ public class ActionReaction : MonoBehaviour
      * @param[in]   action              l'action à définir
      * @param[in]   reaction            la réaction en conséquence
      */
-    public void AddActionReactionsCourbe(int pointCourbe, int action, int reaction, List<GameObject> obj_reaction_list)
+    public void AddActionReactionsCourbe(int pointCourbe, int action, int reaction, GameObject obj)
     {
-        if (action_reactions_courbes[pointCourbe] == null)
-            action_reactions_courbes[pointCourbe] = new Dictionary<int, Dictionary<int, List<GameObject>>>();
-
-        if (action_reactions_courbes[pointCourbe][action] == null)
-            action_reactions_courbes[pointCourbe][action] = new Dictionary<int, List<GameObject>>();
-
-        action_reactions_courbes[pointCourbe][action].Add(reaction, obj_reaction_list);
+        if (!action_reactions_courbes.ContainsKey(pointCourbe))
+            action_reactions_courbes.Add(pointCourbe, new Dictionary<int, Dictionary<int, List<GameObject>>>());
+        
+        if (!action_reactions_courbes[pointCourbe].ContainsKey(action))
+            action_reactions_courbes[pointCourbe].Add(action, new Dictionary<int, List<GameObject>>());
+        
+        if (!action_reactions_courbes[pointCourbe][action].ContainsKey(reaction))
+            action_reactions_courbes[pointCourbe][action].Add(reaction, new List<GameObject>());
+        
+        action_reactions_courbes[pointCourbe][action][reaction].Add(obj);
     }
 
-    public void AddActionReactionsSphere360(int indiceSphere, int action, int reaction, List<GameObject> obj_reaction_list)
+    public void AddActionReactionsSphere360(int indiceSphere, int action, int reaction, GameObject obj)
     {
-        if (action_reactions_spheres360[indiceSphere] == null)
-            action_reactions_spheres360[indiceSphere] = new Dictionary<int, Dictionary<int, List<GameObject>>>();
-
-        if (action_reactions_spheres360[indiceSphere][action] == null)
-            action_reactions_spheres360[indiceSphere][action] = new Dictionary<int, List<GameObject>>();
-
-        action_reactions_spheres360[indiceSphere][action].Add(reaction, obj_reaction_list);
+        if (!action_reactions_spheres360.ContainsKey(indiceSphere))        
+            action_reactions_spheres360.Add(indiceSphere, new Dictionary<int, Dictionary<int, List<GameObject>>>());        
+        
+        if (!action_reactions_spheres360[indiceSphere].ContainsKey(action))
+            action_reactions_spheres360[indiceSphere].Add(action, new Dictionary<int, List<GameObject>>());
+        
+        if (!action_reactions_spheres360[indiceSphere][action].ContainsKey(reaction))
+            action_reactions_spheres360[indiceSphere][action].Add(reaction, new List<GameObject>());
+        
+        action_reactions_spheres360[indiceSphere][action][reaction].Add(obj);
     }
 
     // Constructeur

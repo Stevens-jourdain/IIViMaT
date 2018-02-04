@@ -21,6 +21,7 @@ GameObject:
   - component: {fileID: 4090428133148284}
   - component: {fileID: 33592166416122710}
   - component: {fileID: 135360200026643524}
+  - component: {fileID: 114839869393028770}
   - component: {fileID: 114627219942468828}
   - component: {fileID: 23731940708361942}
   - component: {fileID: 328484070521159428}
@@ -183,6 +184,17 @@ MonoBehaviour:
   cam: {fileID: 0}
   video360: {fileID: 0}
   playcurves: {fileID: 0}
+--- !u!114 &114839869393028770
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1442812234906970}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b2d56f190af97aa478cdec22f71bd256, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!114 &114870993427147534
 MonoBehaviour:
   m_ObjectHideFlags: 1
