@@ -8,6 +8,8 @@ using UnityEditor;
 
 using SimpleJSON;
 
+using Valve.VR;
+
 public class Main : MonoBehaviour {
 
     // Configuration générale
@@ -16,12 +18,22 @@ public class Main : MonoBehaviour {
     // Canvas pour le message popup
     public GameObject Messagebox_Canvas;
 
+    // Pour le déplacement en VR
+    public GameObject cameraRig;
+
     // Vidéo360 script pour l'import de vidéo
     public Video360 video360;
+    public PlayCurve playCurve;
 
     // VAirDraw
     public VAirDraw vairdraw;
     public GameObject curvePrefabs;
+
+    // Gestion du trigger HTC VIVE
+    public TriggerManager triggerManager;
+
+    // Vitesse de marche
+    public float SPEED_WALK = 18.0f;
 
     // Pad HTC Vive
     public SteamVR_TrackedObject left = null, right = null;
@@ -81,6 +93,7 @@ public class Main : MonoBehaviour {
                 Vector3 normal = file["courbes"][i]["normals"][j].ReadVector3();
                 curve.AddPointAndNormal(point, normal);
             }
+            curve.FinalizeImport();
         }
 
         // Chargement des actions-réactions
@@ -353,8 +366,26 @@ public class Main : MonoBehaviour {
 //
 //		menu.AddItems(TitleMenu, handler);
     }
-	
-	void Update () {
+
+    public void Start()
+    {
+        GameObject obj = Instantiate(curvePrefabs);
+        Curve curve = obj.GetComponent<Curve>();
+        curve.SetColor(Color.red);
+
+        Vector3 origine = new Vector3(0,2,0);
+        Vector3 destination = new Vector3(-0.355134f, 1.1f, -10.40283f);
+        for (int i = 0; i < 1000; ++i)
+        {
+            Vector3 point = origine + (float)i/1000.0f * (destination - origine);
+            Vector3 normal = Vector3.up;
+            curve.AddPointAndNormal(point, normal);
+        }
+
+        curve.FinalizeImport();
+    }
+
+    void Update () {
         // Retire le message de l'écran
         if(Input.GetKeyUp(KeyCode.KeypadEnter))        
             Messagebox_Canvas.SetActive(false);
@@ -377,10 +408,24 @@ public class Main : MonoBehaviour {
         if (rightDevice.GetPress(Valve.VR.EVRButtonId.k_EButton_ApplicationMenu) || leftDevice.GetPress(Valve.VR.EVRButtonId.k_EButton_ApplicationMenu))        
             MenuPad();
 
-        if (rightDevice.GetPress(Valve.VR.EVRButtonId.k_EButton_SteamVR_Trigger) || leftDevice.GetPress(Valve.VR.EVRButtonId.k_EButton_SteamVR_Trigger))
+        if (triggerManager.OnTriggerUp(rightDevice) || triggerManager.OnTriggerUp(leftDevice))
         {
             if(Messagebox_Canvas.activeInHierarchy)
                 Messagebox_Canvas.SetActive(false);
+        }
+
+        // S'il n'y a pas de menu
+        if(menu.nbItems <= 0)
+        {
+            Vector3 delta = new Vector3();
+
+            if (rightDevice.GetPress(SteamVR_Controller.ButtonMask.Touchpad))
+            {
+                delta.y = rightDevice.GetAxis(EVRButtonId.k_EButton_SteamVR_Touchpad).y;
+                delta = delta.y * Camera.main.transform.forward;
+            }
+
+            cameraRig.transform.Translate(delta * Time.deltaTime * SPEED_WALK);
         }
     }
 
@@ -432,7 +477,8 @@ public class Main : MonoBehaviour {
             if(isPlayMode)
             {
                 // Reset de tous les index, lancement de la lecture
-
+                video360.Reset();
+                playCurve.Reset();
             }
             else
             {

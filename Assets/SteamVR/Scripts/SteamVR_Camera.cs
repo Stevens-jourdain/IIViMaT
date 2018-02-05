@@ -33,7 +33,7 @@ public class SteamVR_Camera : MonoBehaviour
 
 	static public float sceneResolutionScale
 	{
-		get { return (float)UnityEngine.XR.XRSettings.eyeTextureWidth / (float)UnityEngine.XR.XRSettings.eyeTextureHeight; }
+		get { return (float)UnityEngine.VR.VRSettings.eyeTextureWidth / (float)UnityEngine.VR.VRSettings.eyeTextureHeight; }
 		set { /*UnityEngine.XR.XRSettings.eyeTextureResolutionScale = value;*/ }
 	}
 

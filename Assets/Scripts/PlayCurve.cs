@@ -48,6 +48,12 @@ public class PlayCurve : MonoBehaviour {
         changed = true;
     }
 
+    public void Reset()
+    {
+        currentIndexPoint = 0;
+        currentIndexCurve = 0;
+    }
+
     public void ChangeCurve(int index)
     {
         if (curves.Count > index)
@@ -137,12 +143,12 @@ public class PlayCurve : MonoBehaviour {
             {
                 if (main.leftDevice.GetPress(Valve.VR.EVRButtonId.k_EButton_ApplicationMenu))
                 {
-                    Play();
+                    //Play();
                 }
 
                 if (main.rightDevice.GetPress(Valve.VR.EVRButtonId.k_EButton_ApplicationMenu))
                 {
-                    Pause();
+                    //Pause();
                 }
             }
 

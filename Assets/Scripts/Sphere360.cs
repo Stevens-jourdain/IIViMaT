@@ -7,6 +7,9 @@ public class Sphere360 : MonoBehaviour {
     public Video360 video360;
     public PlayCurve playcurves;
 
+    // Gestion du trigger HTC VIVE
+    public TriggerManager triggerManager;
+
     private string currentAction, currentReaction;
 
     public int video_index = -1;
@@ -83,7 +86,7 @@ public class Sphere360 : MonoBehaviour {
             // S'il s'agit du pad avec le trigger enfoncer
             if (video360.main.rightDevice != null && video360.main.leftDevice != null)
             {
-                if (video360.main.rightDevice.GetPress(Valve.VR.EVRButtonId.k_EButton_SteamVR_Trigger) || video360.main.leftDevice.GetPress(Valve.VR.EVRButtonId.k_EButton_SteamVR_Trigger))
+                if (triggerManager.OnTriggerUp(video360.main.rightDevice) || triggerManager.OnTriggerUp(video360.main.leftDevice))
                 {
                     ShowMenuActionReaction();
                 }

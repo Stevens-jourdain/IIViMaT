@@ -17,7 +17,12 @@ public class Menu : MonoBehaviour {
     public Camera cam;
     public Main main;
 
+    // Gestion du trigger HTC VIVE
+    public TriggerManager triggerManager;
+
     private bool isObject = false;
+
+    private float lastTime;
 
     Del handler;
 
@@ -49,7 +54,7 @@ public class Menu : MonoBehaviour {
             itemsObj[i] = Instantiate(ItemMenu_prefabs, transform);
             itemsObj[i].transform.parent = this.transform;
             itemsObj[i].transform.localScale = new Vector3(0.001f, 0.001f, 0.001f);
-            itemsObj[i].transform.position = new Vector3(0, 0.60f - (i * 0.07f), -1.7f);
+            itemsObj[i].transform.position = new Vector3(0, 2.20f - (i * 0.07f), -1.7f);
             itemsObj[i].SetActive(true);           
 
             itemsList[i] = itemsObj[i].GetComponent<ItemMenu>();
@@ -191,58 +196,64 @@ public class Menu : MonoBehaviour {
             }
 
             // Selection menu en VR
-            if (main.rightDevice.GetPress(SteamVR_Controller.ButtonMask.Touchpad))
+            float y = 0;
+            if (main.rightDevice.GetPress(SteamVR_Controller.ButtonMask.Touchpad))            
+                y = main.rightDevice.GetAxis(EVRButtonId.k_EButton_SteamVR_Touchpad).y;
+            else if(main.leftDevice.GetPress(SteamVR_Controller.ButtonMask.Touchpad))
+                y = main.leftDevice.GetAxis(EVRButtonId.k_EButton_SteamVR_Touchpad).y;
+
+            float currentTime = Time.time;
+
+            if (y > 0.2 && indexItem - 1 >= 0 && currentTime - lastTime > 0.5f)
             {
-                float y = main.rightDevice.GetAxis(EVRButtonId.k_EButton_SteamVR_Touchpad).y;
-                if (y > 0.2 && indexItem + 1 < nbItems)
+                lastTime = currentTime;
+                if (isObject)
                 {
-                    if (isObject)
-                    {
-                        // Stop animation de l'objet
-                        itemsObj[indexItem].GetComponent<ToggleShowAnimation>().StopperAnimation();
+                    // Stop animation de l'objet
+                    itemsObj[indexItem].GetComponent<ToggleShowAnimation>().StopperAnimation();
 
-                        // Objet suivant
-                        indexItem = (indexItem + 1) % nbItems;
+                    // Objet suivant
+                    indexItem = (indexItem - 1);
 
-                        // On regarde l'objet
-                        cam.transform.LookAt(itemsObj[indexItem].transform);
+                    // On regarde l'objet
+                    cam.transform.LookAt(itemsObj[indexItem].transform);
 
-                        // Lancer l'animation de l'objet
-                        itemsObj[indexItem].GetComponent<ToggleShowAnimation>().LancerAnimation();
-                    }
-                    else
-                    {
-                        itemsList[indexItem].Unselect();
-                        indexItem = (indexItem + 1) % nbItems;
-                        itemsList[indexItem].Select();
-                    }
+                    // Lancer l'animation de l'objet
+                    itemsObj[indexItem].GetComponent<ToggleShowAnimation>().LancerAnimation();
                 }
-                else if (y < -0.2 && indexItem - 1 >= 0)
+                else
                 {
-                    if (isObject)
-                    {
-                        // Stop animation de l'objet
-                        itemsObj[indexItem].GetComponent<ToggleShowAnimation>().StopperAnimation();
-
-                        // Objet suivant
-                        indexItem = (indexItem - 1);
-
-                        // On regarde l'objet
-                        cam.transform.LookAt(itemsObj[indexItem].transform);
-
-                        // Lancer l'animation de l'objet
-                        itemsObj[indexItem].GetComponent<ToggleShowAnimation>().LancerAnimation();
-                    }
-                    else
-                    {
-                        itemsList[indexItem].Unselect();
-                        indexItem = (indexItem - 1);
-                        itemsList[indexItem].Select();
-                    }
+                    itemsList[indexItem].Unselect();
+                    indexItem = (indexItem - 1);
+                    itemsList[indexItem].Select();
                 }
             }
+            else if (y < -0.2 && indexItem + 1 < nbItems && currentTime - lastTime > 0.5f)
+            {
+                lastTime = currentTime;
+                if (isObject)
+                {
+                    // Stop animation de l'objet
+                    itemsObj[indexItem].GetComponent<ToggleShowAnimation>().StopperAnimation();
 
-            if (main.rightDevice.GetPress(Valve.VR.EVRButtonId.k_EButton_SteamVR_Trigger))
+                    // Objet suivant
+                    indexItem = (indexItem + 1);
+
+                    // On regarde l'objet
+                    cam.transform.LookAt(itemsObj[indexItem].transform);
+
+                    // Lancer l'animation de l'objet
+                    itemsObj[indexItem].GetComponent<ToggleShowAnimation>().LancerAnimation();
+                }
+                else
+                {
+                    itemsList[indexItem].Unselect();
+                    indexItem = (indexItem + 1);
+                    itemsList[indexItem].Select();
+                }
+            }                
+
+            if (triggerManager.OnTriggerUp(main.rightDevice) || triggerManager.OnTriggerUp(main.leftDevice))
             {
                 string value = "";
                 if (isObject)
@@ -254,7 +265,7 @@ public class Menu : MonoBehaviour {
                 handler(value);
             }
 
-            if (main.rightDevice.GetPress(Valve.VR.EVRButtonId.k_EButton_ApplicationMenu))
+            if (main.rightDevice.GetPress(Valve.VR.EVRButtonId.k_EButton_ApplicationMenu) || main.leftDevice.GetPress(Valve.VR.EVRButtonId.k_EButton_ApplicationMenu))
                 ViderMenu();
         }
 

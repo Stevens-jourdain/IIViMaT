@@ -31,6 +31,20 @@ public class Video360 : MonoBehaviour
 
         mo.main = main;
     }
+    public void Reset()
+    {
+        indexVideoCourante = 0;
+        this.cam.transform.position = videos[0].transform.position;
+
+        // Mettre toutes les vidéos en stop
+        foreach (GameObject v in videos)
+        {
+            v.GetComponent<VideoPlayer>().Stop();
+            v.GetComponent<AudioSource>().Stop();
+        }
+
+        PlayVideo();
+    }
 
     // Update is called once per frame
     void Update()
