@@ -369,7 +369,7 @@ public class Main : MonoBehaviour {
 
     public void Start()
     {
-        GameObject obj = Instantiate(curvePrefabs);
+       /* GameObject obj = Instantiate(curvePrefabs);
         Curve curve = obj.GetComponent<Curve>();
         curve.SetColor(Color.red);
 
@@ -382,7 +382,7 @@ public class Main : MonoBehaviour {
             curve.AddPointAndNormal(point, normal);
         }
 
-        curve.FinalizeImport();
+        curve.FinalizeImport();*/
     }
 
     void Update () {

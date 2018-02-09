@@ -54,7 +54,7 @@ public class Menu : MonoBehaviour {
             itemsObj[i] = Instantiate(ItemMenu_prefabs, transform);
             itemsObj[i].transform.parent = this.transform;
             itemsObj[i].transform.localScale = new Vector3(0.001f, 0.001f, 0.001f);
-            itemsObj[i].transform.position = new Vector3(0, 2.20f - (i * 0.07f), -1.7f);
+            itemsObj[i].transform.position = new Vector3(0 + this.transform.parent.position.x, 1.0f - (i * 0.07f), 0.7f + this.transform.parent.position.z);
             itemsObj[i].SetActive(true);           
 
             itemsList[i] = itemsObj[i].GetComponent<ItemMenu>();

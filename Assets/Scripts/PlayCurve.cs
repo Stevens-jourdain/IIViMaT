@@ -137,6 +137,16 @@ public class PlayCurve : MonoBehaviour {
             actionReaction.ProcessActionReaction(currentIndexPoint);
         }
 
+        if(Input.GetKeyUp(KeyCode.A))
+        {
+            Play();
+        }
+
+        if(Input.GetKeyUp(KeyCode.Z))
+        {
+            Pause();
+        }
+
 	    if(main.leftDevice != null && main.rightDevice != null)
         {
             if (currentIndexPoint != -1)
